@@ -1,11 +1,13 @@
-from .models import Usuario, Painel, PermissaoUsuarioPainel, BaseCompromissos
+from .models import Painel, PermissaoUsuarioPainel, BaseCompromissos
+from django.contrib.auth.models import User
 from rest_framework import serializers
+
 
 
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Usuario
-        fields = ['nome', 'matricula', 'senha', 'email']
+        model = User
+        fields = ['username', 'email', 'password']
 
 
 class PainelSerializer(serializers.ModelSerializer):
@@ -22,3 +24,4 @@ class BaseCompromissosSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseCompromissos
         fields = '__all__'
+

@@ -1,17 +1,10 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class NivelPermissao(models.IntegerChoices):
     ALTO = 3, 'Alto'
     MEDIO = 2, 'Medio'
     BAIXO = 1, 'Baixo'
-
-class Usuario (models.Model):
-    nome = models.CharField(max_length=100, blank=True, default='')
-    matricula = models.CharField(max_length=100, blank=True, default='')
-    senha = models.CharField(max_length=10)
-    email = models.EmailField(max_length=254)
-    def __str__(self):
-        return self.nome + " " + self.matricula + " " + self.senha + " " + self.email
 
 class Painel (models.Model):
     nome = models.CharField(max_length=100, blank=True, default='')
@@ -22,7 +15,7 @@ class Painel (models.Model):
 
 class PermissaoUsuarioPainel (models.Model):
     usuario = models.ForeignKey(
-        Usuario,
+        User,
         null=False,
         on_delete=models.PROTECT
     )
@@ -37,39 +30,23 @@ class PermissaoUsuarioPainel (models.Model):
 
 
 class BaseCompromissos (models.Model):
-    indice = models.IntegerField()
-    identificador = models.CharField(max_length=10)
-    compromisso = models.TextField(max_length=10)
-    eixo = models.CharField(max_length=50)
-    areaPanoGoverno = models.CharField(max_length=50)
-    grupo = models.CharField(max_length=25)
-    orgao = models.CharField(max_length=15)
-    participa = models.CharField(max_length=50)
-    g1 = models.CharField(max_length=5)
-    natureza = models.CharField(max_length=15)
-    cem_dias =  models.CharField(max_length=15)
-    duzentos_dias = models.CharField(max_length=5)
-    trezentos_dias = models.CharField(max_length=5)
-    seisentos_dias = models.CharField(max_length=5)
-    setecentos_trinta_dias = models.CharField(max_length=5)
-    previsao_final = models.CharField(max_length=5)
+    indice = models.IntegerField(null=True,  blank=True)
+    identificador = models.CharField(max_length=10, null=True,  blank=True)
+    compromisso = models.TextField(max_length=10, null=True,  blank=True)
+    eixo = models.CharField(max_length=100, null=True,  blank=True)
+    areaPanoGoverno = models.CharField(max_length=100, null=True,  blank=True)
+    grupo = models.CharField(max_length=50, null=True,  blank=True)
+    orgao = models.CharField(max_length=50, null=True,  blank=True)
+    participa = models.CharField(max_length=100, null=True,  blank=True)
+    g1 = models.CharField(max_length=10, null=True,  blank=True)
+    natureza = models.CharField(max_length=50, null=True,  blank=True)
+    cem_dias =  models.CharField(max_length=50, null=True,  blank=True)
+    duzentos_dias = models.CharField(max_length=10, null=True,  blank=True)
+    trezentos_dias = models.CharField(max_length=10, null=True,  blank=True)
+    seisentos_dias = models.CharField(max_length=10, null=True,  blank=True)
+    setecentos_trinta_dias = models.CharField(max_length=10, null=True,  blank=True)
+    previsao_final = models.CharField(max_length=10, null=True,  blank=True)
 
-    def __init__(self, indice, identificador, compromisso, eixo, areaPanoGoverno, grupo, orgao, participa, g1, 
-                 natureza, cem_dias, duzentos_dias, trezentos_dias, seisentos_dias, setecentos_trinta_dias, previsao_final):
-        self.indice = indice
-        self.identificador = identificador
-        self.compromisso = compromisso
-        self.eixo = eixo
-        self.areaPanoGoverno = areaPanoGoverno
-        self.grupo = grupo
-        self.orgao = orgao
-        self.participa = participa
-        self.g1 = g1
-        self.natureza = natureza
-        self.cem_dias = cem_dias
-        self.duzentos_dias = duzentos_dias
-        self.trezentos_dias = trezentos_dias
-        self.seisentos_dias= seisentos_dias
-        self.setecentos_trinta_dias = setecentos_trinta_dias
-        self.previsao_final = previsao_final
+    def __str__(self):
+        return str(self.indice) +", "+ str(self.identificador) +", "+ str(self.compromisso) +", "+ str(self.eixo) +", "+ str(self.areaPanoGoverno) +", "+ str(self.grupo) +", "+ str(self.orgao) +", "+ str(self.participa)  +", "+ str(self.g1) +", "+ str(self.natureza) +", "+ str(self.cem_dias) +", "+ str(self.duzentos_dias)  +", "+ str(self.trezentos_dias) +", "+ str(self.seisentos_dias) +", "+ str(self.setecentos_trinta_dias) +", "+ str(self.previsao_final)
 

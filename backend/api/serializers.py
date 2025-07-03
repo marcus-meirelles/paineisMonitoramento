@@ -1,24 +1,22 @@
-from .models import Painel, PermissaoUsuarioPainel, BaseCompromissos
-from django.contrib.auth.models import User
+from .models import Painel, Usuario, BaseCompromissos
 from rest_framework import serializers
+from django.contrib.auth.hashers import make_password
 
 
 
 class UsuarioSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
     class Meta:
-        model = User
-        fields = ['username', 'email', 'password']
-
+        model = Usuario
+        fields = ('id', 'username', 'email', 'password', 'nivelPermissao')
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data.get('password'))
+        return super(UsuarioSerializer, self).create(validated_data)
 
 class PainelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Painel
-        fields = ['nome', 'descricao']
-
-class PermissaoUsuarioPainelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PermissaoUsuarioPainel
-        fields = ['usuario', 'painel', 'nivelPermissao']
+        fields = ['nome', 'descricao', 'nivelPermissao']
 
 class BaseCompromissosSerializer(serializers.ModelSerializer):
     class Meta:

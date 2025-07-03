@@ -5,16 +5,17 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Painel, PermissaoUsuarioPainel, BaseCompromissos
+from .models import Painel, Usuario, BaseCompromissos
 from django.contrib.auth.models import User
-from .serializers import UsuarioSerializer, PainelSerializer, PermissaoUsuarioPainelSerializer, BaseCompromissosSerializer
+from .serializers import UsuarioSerializer, PainelSerializer, BaseCompromissosSerializer
 import pandas as pd
+
 
 class UsuarioList(generics.ListCreateAPIView):
 
     permission_classes = [AllowAny]
 
-    queryset = User.objects.all()
+    queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
 
 
@@ -22,7 +23,7 @@ class UsuarioDetail(generics.RetrieveUpdateDestroyAPIView):
 
     permission_classes = [AllowAny]
 
-    queryset = User.objects.all()
+    queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
 
 class PainelList(generics.ListCreateAPIView):
@@ -40,25 +41,10 @@ class PainelDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Painel.objects.all()
     serializer_class = PainelSerializer
 
-class PermissaoUsuarioPainelList(generics.ListCreateAPIView):
-
-    permission_classes = [AllowAny]
-
-    queryset = PermissaoUsuarioPainel.objects.all()
-    serializer_class = PermissaoUsuarioPainelSerializer
-
-
-class PermissaoUsuarioPainelDetail(generics.RetrieveUpdateDestroyAPIView):
-
-    permission_classes = [AllowAny]
-
-    queryset = PermissaoUsuarioPainel.objects.all()
-    serializer_class = PermissaoUsuarioPainelSerializer
-
 class BaseCompromissosView(APIView):
 
     permission_classes = [AllowAny]
-    
+
     def get(self, request):
 
         baseCompromissos = BaseCompromissos.objects.all()
@@ -115,12 +101,12 @@ class LoginView(APIView):
     def post(self, request):
         # Your authentication logic here
         user = authenticate(username=request.data['username'], password=request.data['password'])
-        print(user)
+
         if user:
             token, created = Token.objects.get_or_create(user=user)
             return Response({   'token': token.key,
                                 'user_id': user.pk,
-                                'email': user.email})
+                                'username': user.username})
         else:
             return Response({'error': 'Invalid credentials'}, status=401)
         

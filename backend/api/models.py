@@ -1,5 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+import uuid
+from django.utils import timezone
 
 class NivelPermissao(models.IntegerChoices):
     ALTO = 3, 'Alto'
@@ -9,25 +11,23 @@ class NivelPermissao(models.IntegerChoices):
 class Painel (models.Model):
     nome = models.CharField(max_length=100, blank=True, default='')
     descricao = models.CharField(max_length=100, blank=True, default='')
-    
-    def __str__(self):
-        return self.nome + " " + self.descricao
-
-class PermissaoUsuarioPainel (models.Model):
-    usuario = models.ForeignKey(
-        User,
-        null=False,
-        on_delete=models.PROTECT
-    )
-    painel = models.ForeignKey(
-        Painel,
-        null=False,
-        on_delete=models.PROTECT
-    )
     nivelPermissao = models.IntegerField(blank=False, choices=NivelPermissao.choices)
-    def __str__(self):
-        return self.usuario.nome + " " + self.painel.nome + " " + self.nivelPermissao
 
+    def __str__(self):
+        return self.nome + " " + self.descricao + " " + str(self.nivelPermissao)
+
+class Usuario(AbstractUser):
+    id = models.AutoField(primary_key=True, editable=False)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(default=timezone.now)
+    nivelPermissao = models.IntegerField(blank=True, null=True, choices=NivelPermissao.choices)
+    USERNAME_FIELD = 'username'
+    first_name = None
+    last_name = None
+    def __str__(self):
+        return str(self.id) +" "+ self.username + " " + self.email + " " + str(self.nivelPermissao)
 
 class BaseCompromissos (models.Model):
     indice = models.IntegerField(null=True,  blank=True)

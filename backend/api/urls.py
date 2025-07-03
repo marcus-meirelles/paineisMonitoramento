@@ -10,8 +10,6 @@ urlpatterns = [
     path('usuario/<int:pk>/', views.UsuarioDetail.as_view()),
     path('paineis/', views.PainelList.as_view()),
     path('painel/<int:pk>/', views.PainelDetail.as_view()),
-    path('permissaoUsuarioPaineis/', views.PermissaoUsuarioPainelList.as_view()),
-    path('permissaoUsuarioPainel/<int:pk>/', views.PermissaoUsuarioPainelDetail.as_view()),
     path('baseCompromissos/', views.BaseCompromissosView.as_view()),
     path('hello/', views.HelloView.as_view(), name='hello'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),

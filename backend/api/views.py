@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Painel, Usuario, BaseCompromissos
-from django.contrib.auth.models import User
+from django.contrib.auth import logout
 from .serializers import UsuarioSerializer, PainelSerializer, BaseCompromissosSerializer
 import pandas as pd
 
@@ -104,15 +104,25 @@ class LoginView(APIView):
 
         if user:
             token, created = Token.objects.get_or_create(user=user)
+
             return Response({   'token': token.key,
-                                'user_id': user.pk,
-                                'username': user.username})
+                                'username': user.username,
+                                'id' : user.pk})
         else:
             return Response({'error': 'Invalid credentials'}, status=401)
         
-class HelloView(APIView):
-    #permission_classes = [IsAuthenticated] # <-- And here
+class UsuarioLogadoView(APIView):
+    permission_classes = [IsAuthenticated] # <-- And here
 
     def get(self, request):
-        content = {'message': 'Hello, World!'}
-        return Response(content)
+        usuario = request.user
+        serializer = UsuarioSerializer(usuario, many=False)
+        return Response(serializer.data)
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        logout(request)
+        return Response({"status": "Logged out"})

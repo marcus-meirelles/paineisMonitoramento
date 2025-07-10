@@ -1,7 +1,6 @@
 "use server";
 import { z } from "zod";
-import { registerUserService } from "@/app/data/services/auth-service";
-import { loginUserService } from "@/app/data/services/auth-service";
+import { registerUserService, loginUserService, logoutUserService } from "@/app/data/services/auth-service";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -88,8 +87,6 @@ export async function loginUserAction(prevState: any, formData: FormData) {
     password: formData.get("password"),
   });
 
-  console.log(validatedFields.data);
-
   if (!validatedFields.success) {
     return {
       ...prevState,
@@ -122,11 +119,13 @@ export async function loginUserAction(prevState: any, formData: FormData) {
   const cookieStore = await cookies();
   cookieStore.set("jwt", responseData.token, config);
 
-  redirect("/dashboard");
+  redirect("/home");
 
 }
 
 export async function logoutAction() {
+
+  logoutUserService();
   const cookieStore = await cookies();
   cookieStore.set("jwt", "", { ...config, maxAge: 0 });
   redirect("/signin");

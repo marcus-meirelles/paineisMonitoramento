@@ -1,3 +1,6 @@
+import { getAuthToken } from "./get-token";
+import { getUserMeLoader } from "./get-user-me-loader";
+
 interface RegisterUserProps {
   username: string;
   password: string;
@@ -28,7 +31,6 @@ export async function registerUserService(userData: RegisterUserProps) {
 
 export async function loginUserService(userData: LoginUserProps) {
 
-  console.log(userData)
   try {
     const response = await fetch("http://127.0.0.1:8000/api/signin/", {
       method: "POST",
@@ -36,6 +38,27 @@ export async function loginUserService(userData: LoginUserProps) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ ...userData }),
+    });
+
+    return response.json();
+  } catch (error) {
+    console.error("Login Service Error:", error);
+    throw error;
+  }
+}
+
+export async function logoutUserService() {
+
+  const authToken = await getAuthToken();
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/api/logout/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${authToken}`,
+      },
+      
     });
 
     return response.json();

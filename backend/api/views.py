@@ -5,10 +5,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Painel, Usuario, BaseCompromissos
+from .models import Painel, Usuario, BaseCompromissos, NivelPermissao
 from django.contrib.auth import logout
 from .serializers import UsuarioSerializer, PainelSerializer, BaseCompromissosSerializer
 import pandas as pd
+import json
 
 
 class UsuarioList(generics.ListCreateAPIView):
@@ -117,6 +118,9 @@ class UsuarioLogadoView(APIView):
     def get(self, request):
         usuario = request.user
         serializer = UsuarioSerializer(usuario, many=False)
+        
+        print(serializer.data)
+
         return Response(serializer.data)
 
 
@@ -124,5 +128,18 @@ class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
+        request.user.auth_token.delete()
         logout(request)
         return Response({"status": "Logged out"})
+    
+
+class NivelPermissaoView(APIView):
+    
+    permission_classes = [AllowAny]
+
+    enum_dict = {nivel.value: nivel.name for nivel in NivelPermissao}
+
+    json_string = json.dumps(enum_dict)
+
+    def get(self, request):
+        return Response(self.json_string)

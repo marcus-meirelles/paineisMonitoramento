@@ -4,7 +4,7 @@ import { getUserMeLoader } from "@/app/data/services/get-user-me-loader";
 
 // Define an array of protected routes
 const protectedRoutes = [
-  "/dashboard",
+  "/home",
   // Add more protected routes here
 ];
 
@@ -16,8 +16,13 @@ function isProtectedRoute(path: string): boolean {
 export async function middleware(request: NextRequest) {
   const user = await getUserMeLoader();
   const currentPath = request.nextUrl.pathname;
+  
+  if(currentPath.startsWith("/signin") && user.ok === true)
+    return NextResponse.redirect(new URL("/home", request.url));
 
   if (isProtectedRoute(currentPath) && user.ok === false) {
+    console.log("vai pra login")
+    console.log(user)
     return NextResponse.redirect(new URL("/signin", request.url));
   }
 

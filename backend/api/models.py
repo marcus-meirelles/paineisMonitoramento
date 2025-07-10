@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-import uuid
 from django.utils import timezone
 
 class NivelPermissao(models.IntegerChoices):

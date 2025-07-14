@@ -1,5 +1,6 @@
-import NivelPermissao from "@/app/components/selects/nivelPermissao";
+import SelectNivelPermissao from "@/app/components/selects/nivelPermissao";
 import { Usuario } from "@/types/usuario";
+
 
 function FormEditarUsuario({usuario}: {usuario: Usuario}) {
     async function atualizar(formData: FormData) {
@@ -25,10 +26,10 @@ function FormEditarUsuario({usuario}: {usuario: Usuario}) {
           <label htmlFor="email"/>Email
           <input type="text" id='email' className="border border-sky-600 rounded-sm" name="email" defaultValue={usuario.email}/>
         </div>
-{         <div className="grid">
+         <div className="grid">
           <label htmlFor="nivelPermissao"/>Nivel Permissão
-          <NivelPermissao key_nivel_atual={usuario.nivelPermissao.key}/>
-        </div> }
+          <SelectNivelPermissao nivel={usuario.nivelPermissao}/>
+        </div> 
         <div className="grid">
               <label htmlFor="password"/>Nova senha
               <input type="password" id='nova_password' className="border border-sky-600 rounded-sm" name="nova_password"/>

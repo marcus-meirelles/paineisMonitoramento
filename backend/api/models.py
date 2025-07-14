@@ -33,7 +33,7 @@ class BaseCompromissos (models.Model):
     identificador = models.CharField(max_length=10, null=True,  blank=True)
     compromisso = models.TextField(max_length=10, null=True,  blank=True)
     eixo = models.CharField(max_length=100, null=True,  blank=True)
-    areaPanoGoverno = models.CharField(max_length=100, null=True,  blank=True)
+    areaPlanoGoverno = models.CharField(max_length=100, null=True,  blank=True)
     grupo = models.CharField(max_length=50, null=True,  blank=True)
     orgao = models.CharField(max_length=50, null=True,  blank=True)
     participa = models.CharField(max_length=100, null=True,  blank=True)
@@ -47,5 +47,5 @@ class BaseCompromissos (models.Model):
     previsao_final = models.CharField(max_length=10, null=True,  blank=True)
 
     def __str__(self):
-        return str(self.indice) +", "+ str(self.identificador) +", "+ str(self.compromisso) +", "+ str(self.eixo) +", "+ str(self.areaPanoGoverno) +", "+ str(self.grupo) +", "+ str(self.orgao) +", "+ str(self.participa)  +", "+ str(self.g1) +", "+ str(self.natureza) +", "+ str(self.cem_dias) +", "+ str(self.duzentos_dias)  +", "+ str(self.trezentos_dias) +", "+ str(self.seisentos_dias) +", "+ str(self.setecentos_trinta_dias) +", "+ str(self.previsao_final)
+        return str(self.indice) +", "+ str(self.identificador) +", "+ str(self.compromisso) +", "+ str(self.eixo) +", "+ str(self.areaPlanoGoverno) +", "+ str(self.grupo) +", "+ str(self.orgao) +", "+ str(self.participa)  +", "+ str(self.g1) +", "+ str(self.natureza) +", "+ str(self.cem_dias) +", "+ str(self.duzentos_dias)  +", "+ str(self.trezentos_dias) +", "+ str(self.seisentos_dias) +", "+ str(self.setecentos_trinta_dias) +", "+ str(self.previsao_final)
 

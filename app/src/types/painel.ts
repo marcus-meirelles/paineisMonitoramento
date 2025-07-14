@@ -1,7 +1,7 @@
 import { NivelPermissao } from "./nivelPermissao"
 
 export type Painel = {
-    id: Number,
+    id: number,
     username: string,
     descricao: string,
     nivelPermissao: NivelPermissao,

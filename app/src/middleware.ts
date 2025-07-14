@@ -2,15 +2,16 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getUserMeLoader } from "@/app/data/services/get-user-me-loader";
 
-// Define an array of protected routes
-const protectedRoutes = [
-  "/home",
-  // Add more protected routes here
+
+const notProtectedRoutes = [
+  "/signin",
+  "/signup"
+
 ];
 
 // Helper function to check if a path is protected
-function isProtectedRoute(path: string): boolean {
-  return protectedRoutes.some((route) => path.startsWith(route));
+function isNotProtectedRoute(path: string): boolean {
+  return !notProtectedRoutes.some((route) => path.startsWith(route));
 }
 
 export async function middleware(request: NextRequest) {
@@ -20,9 +21,7 @@ export async function middleware(request: NextRequest) {
   if(currentPath.startsWith("/signin") && user.ok === true)
     return NextResponse.redirect(new URL("/home", request.url));
 
-  if (isProtectedRoute(currentPath) && user.ok === false) {
-    console.log("vai pra login")
-    console.log(user)
+  if (isNotProtectedRoute(currentPath) && user.ok === false) {
     return NextResponse.redirect(new URL("/signin", request.url));
   }
 

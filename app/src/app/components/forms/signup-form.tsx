@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 import { ZodErrors } from "@/app/components/custom/zod-errors";
+import { SubmitButton } from "../custom/submit-button";
 
 const INITIAL_STATE = {
   data: null,
@@ -69,7 +70,11 @@ export function SignupForm() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col">
-            <button className="w-full">Cadastrar</button>
+            <SubmitButton
+              className="w-full"
+              text="Cadastrar"
+              loadingText="Loading"
+            />
           </CardFooter>
         </Card>
         <div className="mt-4 text-center text-sm">

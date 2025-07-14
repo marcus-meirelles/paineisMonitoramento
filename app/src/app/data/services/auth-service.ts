@@ -1,5 +1,4 @@
 import { getAuthToken } from "./get-token";
-import { getUserMeLoader } from "./get-user-me-loader";
 
 interface RegisterUserProps {
   username: string;

@@ -1,17 +1,13 @@
-import { NivelPermissao } from "@/types/nivelPermissao";
 
 
-export default async function SelectSetor({ key_nivel_atual }: {key_nivel_atual?: number}) {
+export default function SelectNivelPermissao({nivel} : {nivel : number}) {
     
-    const setores: NivelPermissao[] = await fetch(`http://localhost:8000/niveisPermissao.json`)
-        .then(res => res.json())
-        .then(data => data.results)
-
     return (
-        <select name="nivelPermissao" id="nivelPermissao" className="border border-sky-600 rounded-sm" defaultValue={key_nivel_atual}>
-            {setores.map((nivelPermissao: NivelPermissao) => (
-                <option key={nivelPermissao.key.toString()} value={nivelPermissao.key.toString()}>{nivelPermissao.value}</option>
-            ))}
+         <select name="nivelPermissao" id="nivelPermissao" className="border border-sky-600 rounded-sm" defaultValue={nivel}>
+            <option value="0" > -- </option>
+            <option value="3" >Alto</option>
+            <option value="2" >Médio</option>
+            <option value="1" >Baixo</option>
         </select>
     )
 }

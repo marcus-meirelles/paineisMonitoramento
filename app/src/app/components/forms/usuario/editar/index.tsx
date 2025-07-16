@@ -2,7 +2,7 @@ import SelectNivelPermissao from "@/app/components/selects/nivelPermissao";
 import { Usuario } from "@/types/usuario";
 
 
-function FormEditarUsuario({usuario}: {usuario: Usuario}) {
+export default function FormEditarUsuario({usuario}: {usuario: Usuario}) {
     async function atualizar(formData: FormData) {
             'use server'
             try {
@@ -44,5 +44,3 @@ function FormEditarUsuario({usuario}: {usuario: Usuario}) {
     </form>
     )
 }
-
-export default FormEditarUsuario;

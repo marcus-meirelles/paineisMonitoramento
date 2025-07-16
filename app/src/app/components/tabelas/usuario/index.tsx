@@ -1,7 +1,5 @@
 'use client'
 import { Usuario } from "@/types/usuario";
-import { useState, useEffect } from "react";
-import Link from "next/link";
 
 export default function TabelaUsuario({usuarios} : {usuarios? : Usuario[]}) {
 

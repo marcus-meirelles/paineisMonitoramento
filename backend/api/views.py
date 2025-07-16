@@ -44,7 +44,7 @@ class PainelDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class BaseCompromissosView(APIView):
 
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
 
@@ -52,7 +52,6 @@ class BaseCompromissosView(APIView):
         serializer = BaseCompromissosSerializer(baseCompromissos, many=True)
         
         eixo = BaseCompromissos.objects.values('eixo').distinct()
-
         jsonEixo = ''
         if(eixo is not None) :
             listaEixo = []
@@ -139,8 +138,6 @@ class BaseCompromissosView(APIView):
             for obj in previsaoFinal.iterator():
                 listaPrevisaoFinal.append(obj['previsao_final'])
             jsonPrevisaoFinal = json.dumps(listaPrevisaoFinal, indent=4, ensure_ascii=False)
-        
-        print(jsonEixo)
 
         return Response({'data' : serializer.data,
                          'dominioEixo' :  jsonEixo,

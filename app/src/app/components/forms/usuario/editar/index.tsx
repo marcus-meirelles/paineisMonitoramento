@@ -1,4 +1,4 @@
-import SelectNivelPermissao from "@/app/components/selects/nivelPermissao";
+import SelectNivelPermissao from "@/app/components/selects/selectNivelPermissao";
 import { Usuario } from "@/types/usuario";
 
 

@@ -17,7 +17,7 @@ export default async function PreencheDashboard() {
   });
 
   const result = await response.json()
-
+/* 
   const baseCompromisso: BaseCompromissos[] = result.data
 
   const compromissosConcluidos = baseCompromisso.filter(item => item.previsao_final === "C").length;
@@ -36,10 +36,10 @@ export default async function PreencheDashboard() {
     'compromissosParcialmenteConcluidos': compromissosParcialmenteConcluidos,
     'compromissosACumprir': compromissosACumprir,
     'dominioOrgaos': dominioOrgaos,
-  }
+  } */
 
   return (
-    <Dashboard data = { data } />
+    <Dashboard data = { result } />
   )
 
 }

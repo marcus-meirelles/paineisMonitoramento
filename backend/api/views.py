@@ -139,7 +139,7 @@ class BaseCompromissosView(APIView):
                 listaPrevisaoFinal.append(obj['previsao_final'])
             jsonPrevisaoFinal = json.dumps(listaPrevisaoFinal, indent=4, ensure_ascii=False)
 
-        return Response({'data' : serializer.data,
+        return Response({'base' : serializer.data,
                          'dominioEixo' :  jsonEixo,
                          'dominioAreaPlanoGoverno' : jsonAreaPlanoGoverno,
                          'dominioGrupo' : jsonGrupo,

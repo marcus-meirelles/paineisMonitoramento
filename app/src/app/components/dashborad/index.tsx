@@ -5,6 +5,9 @@ import Template from "@/app/components/ui/template";
 import { BaseCompromissos } from '@/types/baseCompromisso';
 import { CompromissosOrgao } from '@/types/compromissosOrgao';
 import { EspecificacaoCompromissos } from '@/types/especificacaoCompromissos';
+import { HistoricoStatus } from '@/types/hitoricoStatus'
+import { DistriComproGrupoStatus } from '@/types/distriComproGrupoStatus'
+import { LineChart, BarChart } from '@mantine/charts';
 
 export default function Dashboard({ data }: any) {
 
@@ -19,6 +22,8 @@ export default function Dashboard({ data }: any) {
   const compromissosACumprir = baseCompromisso.filter(item => item.previsao_final == 'nan').length;
 
   const dominioOrgaos: string[] = JSON.parse(data.dominioOrgao)
+
+  const dominioGrupo: string[] = JSON.parse(data.dominioGrupo)
 
   const [selectedCiclo, setSelectCiclo] = useState('0');
 
@@ -70,9 +75,21 @@ export default function Dashboard({ data }: any) {
   const [linhasEspecificacaoCompromissos, setLinhasEspecificacaoCompromissos] = useState<EspecificacaoCompromissos[]>([]);
 
   useEffect(() => {
-    setLinhasEspecificacaoCompromissos(preencherEspecificacaoCompromissos(selectedCiclo, baseCompromisso))
+    setLinhasEspecificacaoCompromissos(preencherEspecificacaoCompromissos(selectedCiclo, selectedOrgao, baseCompromisso))
   }, [selectedCiclo, selectedOrgao]);
 
+  const [dadosHistoricoStatus, setDadosHistoricoStatus] = useState<HistoricoStatus[]>([]);
+
+  useEffect(() => {
+    setDadosHistoricoStatus(geraDadosHistoricoStatus(selectedOrgao, baseCompromisso))
+  }, [selectedOrgao]);
+
+
+  const [dadosDistriComprGrupoStatus, setDadosDistriComprGrupoStatus] = useState<DistriComproGrupoStatus[]>([]);
+
+  useEffect(() => {
+    setDadosDistriComprGrupoStatus(geraDadosDistriComprGrupoStatus(selectedCiclo, dominioGrupo, baseCompromisso))
+  }, [selectedCiclo]);
 
 
   function calculaValorAgragado(tipoFiltro: string, orgao: string): number {
@@ -168,7 +185,7 @@ export default function Dashboard({ data }: any) {
                 <p>Orgão</p>
                 <div>
                   <select name="selectOrgao" id="selectOrgao" className="border border-sky-600 rounded-sm" value={selectedOrgao} onChange={e => setSelectOrgao(e.target.value)}>
-                    <option value="Todos" > Todos </option>
+                    <option value="0" > Todos </option>
                     {dominioOrgaos.map((s: string) => (<option key={`${s}`} value={s}> {s}</option>))}
                   </select>
                 </div>
@@ -192,12 +209,41 @@ export default function Dashboard({ data }: any) {
             <div className="">
               <div className="flex flex-row gap-4 h-80">
                 <div className="border-1 basis-1/3">
-                  <p>Histgorico do Status</p>
-                  <div className='border-1 h-74'></div>
+                  <p>Histórico do Status</p>
+                  <div className='border-1 h-74'>
+                    <LineChart
+                      h={260}
+                      w={580}
+                      withLegend
+                      data={dadosHistoricoStatus}
+                      xAxisProps={{ padding: { left: 30, right: 30 } }}
+                      dataKey="ciclo"
+                      series={[
+                        { name: 'A_cumprir', color: 'indigo.6' },
+                        { name: 'Parc_concluídos', color: 'blue.6' },
+                        { name: 'Concluídos', color: 'teal.6' },
+                      ]}
+                      curveType="linear"
+                    />
+                  </div>
                 </div>
                 <div className="border-1 basis-2/3">
                   <p>Distribuição dos Compromissos por Grupo e Status</p>
-                  <div className='border-1 h-74'></div>
+                  <div className='border-1 h-74'>
+                    <BarChart
+                      h={260}
+                      withLegend
+                      data={dadosDistriComprGrupoStatus}
+                      dataKey="grupo"
+                      type="stacked"
+                      maxBarWidth={50}
+                      xAxisProps={{ padding: { left: 30, right: 30}}}
+                      series={[
+                        { name: 'Parc_concluídos', color: 'violet.6' },
+                        { name: 'Concluídos', color: 'blue.6' },
+                      ]}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -214,11 +260,11 @@ export default function Dashboard({ data }: any) {
                     <table className=''>
                       <thead >
                         <tr className='border'>
-                          <th className='border px-4'>Órgão</th>
-                          <th className='border px-4'>Concluido</th>
-                          <th className='border px-4'>Parcialmente</th>
-                          <th className='border px-4'>nan</th>
-                          <th className='border px-4'>Total</th>
+                          <th className='border px-4 w-30'>Órgão</th>
+                          <th className='border px-4 w-30'>Concluido</th>
+                          <th className='border px-4 w-30'>Parcialmente</th>
+                          <th className='border px-4 w-30'>nan</th>
+                          <th className='border px-4 w-30'>Total</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -247,11 +293,11 @@ export default function Dashboard({ data }: any) {
                     <table className=''>
                       <thead >
                         <tr className='border'>
-                          <th className='border px-4'>ID</th>
-                          <th className='border px-4'>Órgão</th>
-                          <th className='border px-4'>Natureza</th>
-                          <th className='border px-4'>Descrição</th>
-                          <th className='border px-4'>Status</th>
+                          <th className='border px-4 w-30'>ID</th>
+                          <th className='border px-4 w-30'>Órgão</th>
+                          <th className='border px-4 w-30'>Natureza</th>
+                          <th className='border px-4 w-200'>Descrição</th>
+                          <th className='border px-4 w-30'>Status</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -361,6 +407,7 @@ function preencherCompromissosOrgao(selectedCiclo: string, baseCompromisso: Base
           resultado.push(tupla)
         })
         return resultado
+
       default:
 
         dominioOrgaos.forEach(orgao => {
@@ -378,20 +425,282 @@ function preencherCompromissosOrgao(selectedCiclo: string, baseCompromisso: Base
 
 
 }
-function preencherEspecificacaoCompromissos(selectedCiclo: string, baseCompromisso: BaseCompromissos[]): EspecificacaoCompromissos[] {
-  let resultado: EspecificacaoCompromissos[] = []
+function preencherEspecificacaoCompromissos(selectedCiclo: string, orgao: string, baseCompromisso: BaseCompromissos[]): EspecificacaoCompromissos[] {
 
-  if (selectedCiclo == '0') {
-
-    return baseCompromisso.map(item => ({
-      identificador: item.identificador,
-      orgao: item.orgao,
-      natureza: item.natureza,
-      descricao: item.compromisso,
-      status: item.previsao_final
-    } as EspecificacaoCompromissos))
-
+  let tuplas: BaseCompromissos[] = []
+  if (orgao == '0') {
+    tuplas = baseCompromisso
+  } else {
+    tuplas = baseCompromisso.filter(item => item.orgao == orgao)
   }
-  return resultado
+
+  switch (selectedCiclo) {
+    case '0':
+      return tuplas.map(item => ({
+        identificador: item.identificador,
+        orgao: item.orgao,
+        natureza: item.natureza,
+        descricao: item.compromisso,
+        status: item.previsao_final
+      } as EspecificacaoCompromissos))
+
+    case '1':
+      return tuplas.map(item => ({
+        identificador: item.identificador,
+        orgao: item.orgao,
+        natureza: item.natureza,
+        descricao: item.compromisso,
+        status: item.cem_dias
+      } as EspecificacaoCompromissos))
+
+    case '2':
+      return tuplas.map(item => ({
+        identificador: item.identificador,
+        orgao: item.orgao,
+        natureza: item.natureza,
+        descricao: item.compromisso,
+        status: item.duzentos_dias
+      } as EspecificacaoCompromissos))
+
+    case '3':
+      return tuplas.map(item => ({
+        identificador: item.identificador,
+        orgao: item.orgao,
+        natureza: item.natureza,
+        descricao: item.compromisso,
+        status: item.trezentos_dias
+      } as EspecificacaoCompromissos))
+
+    case '4':
+      return tuplas.map(item => ({
+        identificador: item.identificador,
+        orgao: item.orgao,
+        natureza: item.natureza,
+        descricao: item.compromisso,
+        status: item.seisentos_dias
+      } as EspecificacaoCompromissos))
+
+    case '5':
+      return tuplas.map(item => ({
+        identificador: item.identificador,
+        orgao: item.orgao,
+        natureza: item.natureza,
+        descricao: item.compromisso,
+        status: item.setecentos_trinta_dias
+      } as EspecificacaoCompromissos))
+
+    default:
+      return tuplas.map(item => ({
+        identificador: item.identificador,
+        orgao: item.orgao,
+        natureza: item.natureza,
+        descricao: item.compromisso,
+        status: item.previsao_final
+      } as EspecificacaoCompromissos))
+  }
+
 }
+
+function geraDadosHistoricoStatus(orgao: string, baseCompromisso: BaseCompromissos[]): HistoricoStatus[] {
+
+  let retorno: HistoricoStatus[] = []
+  const ciclos = ['Status 100 dias', 'Status 200 dias', 'Status 300 dias', 'Status 600 dias', 'Status 630 dias']
+
+  if (orgao == '0') {
+    ciclos.forEach(item => {
+      let ciclo = ''
+      let A_cumprir = 0
+      let Parc_concluídos = 0
+      let Concluídos = 0
+      let tupla: HistoricoStatus = { ciclo, A_cumprir, Parc_concluídos, Concluídos }
+      if (item == 'Status 100 dias') {
+        ciclo = item
+        A_cumprir = baseCompromisso.filter(item => item.cem_dias == 'nan').length
+        Parc_concluídos = baseCompromisso.filter(item => item.cem_dias == 'PC').length
+        Concluídos = baseCompromisso.filter(item => item.cem_dias == 'C').length
+        tupla = { ciclo, A_cumprir, Parc_concluídos, Concluídos }
+      }
+      else if (item == 'Status 200 dias') {
+        ciclo = item
+        A_cumprir = baseCompromisso.filter(item => item.duzentos_dias == 'nan').length
+        Parc_concluídos = baseCompromisso.filter(item => item.duzentos_dias == 'PC').length
+        Concluídos = baseCompromisso.filter(item => item.duzentos_dias == 'C').length
+        tupla = { ciclo, A_cumprir, Parc_concluídos, Concluídos }
+      }
+      else if (item == 'Status 300 dias') {
+        ciclo = item
+        A_cumprir = baseCompromisso.filter(item => item.trezentos_dias == 'nan').length
+        Parc_concluídos = baseCompromisso.filter(item => item.trezentos_dias == 'PC').length
+        Concluídos = baseCompromisso.filter(item => item.trezentos_dias == 'C').length
+        tupla = { ciclo, A_cumprir, Parc_concluídos, Concluídos }
+      }
+      else if (item == 'Status 600 dias') {
+        ciclo = item
+        A_cumprir = baseCompromisso.filter(item => item.seisentos_dias == 'nan').length
+        Parc_concluídos = baseCompromisso.filter(item => item.seisentos_dias == 'PC').length
+        Concluídos = baseCompromisso.filter(item => item.seisentos_dias == 'C').length
+        tupla = { ciclo, A_cumprir, Parc_concluídos, Concluídos }
+      }
+      else if (item == 'Status 630 dias') {
+        ciclo = item
+        A_cumprir = baseCompromisso.filter(item => item.setecentos_trinta_dias == 'nan').length
+        Parc_concluídos = baseCompromisso.filter(item => item.setecentos_trinta_dias == 'PC').length
+        Concluídos = baseCompromisso.filter(item => item.setecentos_trinta_dias == 'C').length
+        tupla = { ciclo, A_cumprir, Parc_concluídos, Concluídos }
+      }
+      retorno.push(tupla)
+    })
+  }
+  else {
+    ciclos.forEach(item => {
+      let ciclo = ''
+      let A_cumprir = 0
+      let Parc_concluídos = 0
+      let Concluídos = 0
+      let tupla: HistoricoStatus = { ciclo, A_cumprir, Parc_concluídos, Concluídos }
+      if (item == 'Status 100 dias') {
+        ciclo = item
+        A_cumprir = baseCompromisso.filter(item => item.cem_dias == 'nan' && item.orgao == orgao).length
+        Parc_concluídos = baseCompromisso.filter(item => item.cem_dias == 'PC' && item.orgao == orgao).length
+        Concluídos = baseCompromisso.filter(item => item.cem_dias == 'C' && item.orgao == orgao).length
+        tupla = { ciclo, A_cumprir, Parc_concluídos, Concluídos }
+      }
+      else if (item == 'Status 200 dias') {
+        ciclo = item
+        A_cumprir = baseCompromisso.filter(item => item.duzentos_dias == 'nan' && item.orgao == orgao).length
+        Parc_concluídos = baseCompromisso.filter(item => item.duzentos_dias == 'PC' && item.orgao == orgao).length
+        Concluídos = baseCompromisso.filter(item => item.duzentos_dias == 'C' && item.orgao == orgao).length
+        tupla = { ciclo, A_cumprir, Parc_concluídos, Concluídos }
+      }
+      else if (item == 'Status 300 dias') {
+        ciclo = item
+        A_cumprir = baseCompromisso.filter(item => item.trezentos_dias == 'nan' && item.orgao == orgao).length
+        Parc_concluídos = baseCompromisso.filter(item => item.trezentos_dias == 'PC' && item.orgao == orgao).length
+        Concluídos = baseCompromisso.filter(item => item.trezentos_dias == 'C' && item.orgao == orgao).length
+        tupla = { ciclo, A_cumprir, Parc_concluídos, Concluídos }
+      }
+      else if (item == 'Status 600 dias') {
+        ciclo = item
+        A_cumprir = baseCompromisso.filter(item => item.seisentos_dias == 'nan' && item.orgao == orgao).length
+        Parc_concluídos = baseCompromisso.filter(item => item.seisentos_dias == 'PC' && item.orgao == orgao).length
+        Concluídos = baseCompromisso.filter(item => item.seisentos_dias == 'C' && item.orgao == orgao).length
+        tupla = { ciclo, A_cumprir, Parc_concluídos, Concluídos }
+      }
+      else if (item == 'Status 630 dias') {
+        ciclo = item
+        A_cumprir = baseCompromisso.filter(item => item.setecentos_trinta_dias == 'nan' && item.orgao == orgao).length
+        Parc_concluídos = baseCompromisso.filter(item => item.setecentos_trinta_dias == 'PC' && item.orgao == orgao).length
+        Concluídos = baseCompromisso.filter(item => item.setecentos_trinta_dias == 'C' && item.orgao == orgao).length
+        tupla = { ciclo, A_cumprir, Parc_concluídos, Concluídos }
+      }
+      retorno.push(tupla)
+    })
+  }
+  return retorno
+}
+
+function geraDadosDistriComprGrupoStatus(selectedCiclo: string, dominioGrupo: string[], baseCompromisso: BaseCompromissos[]): DistriComproGrupoStatus[] {
+
+
+  let retorno: DistriComproGrupoStatus[] = []
+
+  console.log(dominioGrupo)
+
+  dominioGrupo.forEach((item, index) => {
+    if (item == 'INFRAESTRUTURA') {
+      dominioGrupo[index] = 'INFRA.'
+    }
+    else if (item == 'DESENVOLVIMENTO RURAL') {
+      dominioGrupo[index] = 'DES. RURAL'
+    }
+    else if (item == 'GESTÃO (EFICIÊNCIA E TRANSPARÊNCIA)') {
+      dominioGrupo[index] = 'GEST. (EFIC. E TRANSP.)'
+    }
+    else if (item == 'DESENVOLVIMENTO ECONÔMICO') {
+      dominioGrupo[index] = 'DES. ECONÔMICO'
+    }
+    else if (item == 'DESENVOLVIMENTO SOCIAL') {
+      dominioGrupo[index] = 'DES. SOCIAL'
+    }
+  });
+
+  let grupo = ''
+  let Concluídos = 0
+  let Parc_concluídos = 0
+  let tupla: DistriComproGrupoStatus = { grupo, Parc_concluídos, Concluídos }
+
+  switch (selectedCiclo) {
+    case '0':
+      dominioGrupo.forEach(item => {
+        grupo = item
+        Concluídos = baseCompromisso.filter(item => item.previsao_final == 'C' && item.grupo == grupo).length
+        Parc_concluídos = baseCompromisso.filter(item => item.previsao_final == 'PC' && item.grupo == grupo).length
+        tupla = { grupo, Concluídos, Parc_concluídos }
+        retorno.push(tupla)
+      })
+      return retorno
+
+    case '1':
+      dominioGrupo.forEach(item => {
+        grupo = item
+        Concluídos = baseCompromisso.filter(item => item.cem_dias == 'C' && item.grupo == grupo).length
+        Parc_concluídos = baseCompromisso.filter(item => item.cem_dias == 'PC' && item.grupo == grupo).length
+        tupla = { grupo, Concluídos, Parc_concluídos }
+        retorno.push(tupla)
+      })
+      return retorno
+    case '2':
+      dominioGrupo.forEach(item => {
+        grupo = item
+        Concluídos = baseCompromisso.filter(item => item.duzentos_dias == 'C' && item.grupo == grupo).length
+        Parc_concluídos = baseCompromisso.filter(item => item.duzentos_dias == 'PC' && item.grupo == grupo).length
+        tupla = { grupo, Concluídos, Parc_concluídos }
+        retorno.push(tupla)
+      })
+      return retorno
+
+    case '3':
+      dominioGrupo.forEach(item => {
+        grupo = item
+        Concluídos = baseCompromisso.filter(item => item.trezentos_dias == 'C' && item.grupo == grupo).length
+        Parc_concluídos = baseCompromisso.filter(item => item.trezentos_dias == 'PC' && item.grupo == grupo).length
+        tupla = { grupo, Concluídos, Parc_concluídos }
+        retorno.push(tupla)
+      })
+      return retorno
+
+    case '4':
+      dominioGrupo.forEach(item => {
+        grupo = item
+        Concluídos = baseCompromisso.filter(item => item.seisentos_dias == 'C' && item.grupo == grupo).length
+        Parc_concluídos = baseCompromisso.filter(item => item.seisentos_dias == 'PC' && item.grupo == grupo).length
+        tupla = { grupo, Concluídos, Parc_concluídos }
+        retorno.push(tupla)
+      })
+      return retorno
+
+    case '5':
+      dominioGrupo.forEach(item => {
+        grupo = item
+        Concluídos = baseCompromisso.filter(item => item.setecentos_trinta_dias == 'C' && item.grupo == grupo).length
+        Parc_concluídos = baseCompromisso.filter(item => item.setecentos_trinta_dias == 'PC' && item.grupo == grupo).length
+        tupla = { grupo, Concluídos, Parc_concluídos }
+        retorno.push(tupla)
+      })
+      return retorno
+
+    default:
+      dominioGrupo.forEach(item => {
+        grupo = item
+        Concluídos = baseCompromisso.filter(item => item.previsao_final == 'C' && item.grupo == grupo).length
+        Parc_concluídos = baseCompromisso.filter(item => item.previsao_final == 'PC' && item.grupo == grupo).length
+        tupla = { grupo, Concluídos, Parc_concluídos }
+        retorno.push(tupla)
+      })
+      return retorno
+  }
+
+}
+
+
 

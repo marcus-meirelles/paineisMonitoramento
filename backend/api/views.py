@@ -44,7 +44,7 @@ class PainelDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class BaseCompromissosView(APIView):
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request):
 
@@ -184,11 +184,11 @@ class BaseCompromissosView(APIView):
         
         df.set_index('indice', inplace=True)
 
-        #df.to_csv('resultado.csv')
+        df['cem_dias'] = df['cem_dias'].replace({'NÃO AVALIADO': 'nan', 'N': 'nan'})
 
         for row_tuple in df.itertuples():
             bc = BaseCompromissos(indice=row_tuple[0], identificador=row_tuple[1], compromisso=row_tuple[2], eixo=row_tuple[3], areaPlanoGoverno=row_tuple[4], grupo=row_tuple[5], orgao=row_tuple[6], participa=row_tuple[7], g1=row_tuple[8], 
-                             natureza=row_tuple[9], cem_dias=row_tuple[10], duzentos_dias=row_tuple[11], trezentos_dias=row_tuple[12], seisentos_dias=row_tuple[13], setecentos_trinta_dias=row_tuple[14], previsao_final=row_tuple[15]) 
+                             natureza=row_tuple[9], cem_dias= row_tuple[10], duzentos_dias=row_tuple[11], trezentos_dias=row_tuple[12], seisentos_dias=row_tuple[13], setecentos_trinta_dias=row_tuple[14], previsao_final=row_tuple[15]) 
             bc.save() 
         
         return Response(status=status.HTTP_200_OK)

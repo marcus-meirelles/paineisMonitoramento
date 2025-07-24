@@ -1,4 +1,4 @@
-import { Usuario } from "@/types/usuario";
+/* 
 import { getAuthToken } from "./get-token";
 
 export async function getUserMeLoader() {
@@ -27,4 +27,4 @@ export async function getUserMeLoader() {
         console.log(error);
         return { ok: false, data: null, error: error };
     }
-}
+} */

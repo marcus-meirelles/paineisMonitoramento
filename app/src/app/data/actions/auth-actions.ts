@@ -1,10 +1,9 @@
 "use server";
 import { z } from "zod";
 import { registerUserService, loginUserService, logoutUserService } from "@/app/data/services/auth-service";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
-
+import atualizaDadosBaseCompromissos from "../services/atualiza-base-compromissos";
+import { createSession, deleteSession, getSession} from '@/lib/session'
 
 export async function registerUserAction(prevState: any, formData: FormData) {
 
@@ -42,6 +41,8 @@ export async function registerUserAction(prevState: any, formData: FormData) {
       message: "Falha no registro.",
     };
   }
+
+  redirect("/login");
 }
 
 
@@ -61,9 +62,9 @@ export async function loginUserAction(prevState: any, formData: FormData) {
     };
   }
 
-  const responseData = await loginUserService(validatedFields.data);
+  const resp = await loginUserService(validatedFields.data);
 
-  if (!responseData) {
+  if (!resp) {
     return {
       ...prevState,
       strapiErrors: null,
@@ -72,17 +73,19 @@ export async function loginUserAction(prevState: any, formData: FormData) {
     };
   }
 
-  if (responseData.error) {
+  if (resp.error) {
     return {
       ...prevState,
-      strapiErrors: responseData.error,
+      strapiErrors: null,
       zodErrors: null,
       message: "Falha no Login.",
     };
   }
 
-  const cookieStore = await cookies();
-  cookieStore.set("jwt", responseData.token, config);
+  await createSession(resp.userId, resp.username, resp.token, resp.nivelPermissao, resp.isSuperUser)
+
+
+  getSession()
 
   redirect("/home");
 
@@ -91,18 +94,16 @@ export async function loginUserAction(prevState: any, formData: FormData) {
 export async function logoutAction() {
 
   logoutUserService();
-  const cookieStore = await cookies();
-  cookieStore.set("jwt", "", { ...config, maxAge: 0 });
-  redirect("/signin");
+  await deleteSession()
+  redirect("/login");
 }
 
-const config = {
-  maxAge: 60 * 60 * 24 * 7, // 1 week
-  path: "/",
-  domain: process.env.HOST ?? "localhost",
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-};
+export async function atualizaBaseCompromissos() {
+
+  atualizaDadosBaseCompromissos();
+
+  redirect("/home");
+}
 
 const schemaRegister = z.object({
   username: z.string().min(3).max(20, {

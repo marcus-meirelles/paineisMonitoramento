@@ -10,6 +10,12 @@ from django.contrib.auth import logout
 from .serializers import UsuarioSerializer, PainelSerializer, BaseCompromissosSerializer
 import pandas as pd
 import json
+from .Authentication import token_expire_handler, expires_in
+from rest_framework.status import (
+    HTTP_400_BAD_REQUEST,
+    HTTP_404_NOT_FOUND,
+    HTTP_200_OK,
+)
 
 
 class UsuarioList(generics.ListCreateAPIView):
@@ -156,8 +162,6 @@ class BaseCompromissosView(APIView):
 
     def put(self, request):
 
-        BaseCompromissos.objects.all().delete()
-
         csv_export_url  = 'https://docs.google.com/spreadsheets/d/1QvIHGu8ovZAo1m8PPJe0S1NgP5ZWTjipURufOzgIGzQ/export?format=csv&gid=1227780371#gid=1227780371'
        
         df = pd.read_csv(csv_export_url, encoding='UTF-8')
@@ -186,45 +190,48 @@ class BaseCompromissosView(APIView):
 
         df['cem_dias'] = df['cem_dias'].replace({'NÃO AVALIADO': 'nan', 'N': 'nan'})
 
+        BaseCompromissos.objects.all().delete()
+        
         for row_tuple in df.itertuples():
             bc = BaseCompromissos(indice=row_tuple[0], identificador=row_tuple[1], compromisso=row_tuple[2], eixo=row_tuple[3], areaPlanoGoverno=row_tuple[4], grupo=row_tuple[5], orgao=row_tuple[6], participa=row_tuple[7], g1=row_tuple[8], 
                              natureza=row_tuple[9], cem_dias= row_tuple[10], duzentos_dias=row_tuple[11], trezentos_dias=row_tuple[12], seisentos_dias=row_tuple[13], setecentos_trinta_dias=row_tuple[14], previsao_final=row_tuple[15]) 
             bc.save() 
         
-        return Response(status=status.HTTP_200_OK)
+        return Response({'Base de compromissos atualizada'},status=status.HTTP_200_OK)
 
 class LoginView(APIView):
 
     permission_classes = [AllowAny]
 
     def post(self, request):
-        # Your authentication logic here
+
         user = authenticate(username=request.data['username'], password=request.data['password'])
 
-        if user:
-            token, created = Token.objects.get_or_create(user=user)
+        print(user)
+        if not user:
+            return Response({'detail': 'Invalid Credentials or activate account'}, status=HTTP_404_NOT_FOUND)
+           
+        token, created = Token.objects.get_or_create(user=user)
 
-            return Response({   'token': token.key,
-                                'username': user.username,
-                                'id' : user.pk})
-        else:
-            return Response({'error': 'Invalid credentials'}, status=401)
-        
-class UsuarioLogadoView(APIView):
-    permission_classes = [IsAuthenticated] # <-- And here
+        #token_expire_handler will check, if the token is expired it will generate new one
+        is_expired, token = token_expire_handler(token)     # The implementation will be described further
+        user_serialized = UsuarioSerializer(user)
 
-    def get(self, request):
-        usuario = request.user
-        serializer = UsuarioSerializer(usuario, many=False)
-
-        return Response(serializer.data)
-
+        return Response({
+            'user': user_serialized.data, 
+            'expires_in': expires_in(token),
+            'token': token.key,
+            'isSuperUser' : user.is_superuser == None if False else user.is_superuser
+            
+        }, status=HTTP_200_OK)
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
     
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
+        
         request.user.auth_token.delete()
+       
         logout(request)
         return Response({"status": "Logged out"})
     
@@ -239,3 +246,5 @@ class NivelPermissaoView(APIView):
 
     def get(self, request):
         return Response({self.json_string})
+    
+    

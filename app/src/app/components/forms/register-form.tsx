@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+
+import { registerUserAction } from "@/app/data/actions/auth-actions";
 import { useActionState } from "react";
-import { loginUserAction } from "@/app/data/actions/auth-actions";
 
 import {
   CardTitle,
@@ -15,26 +16,24 @@ import {
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+
 import { ZodErrors } from "@/app/components/custom/zod-errors";
-import { SubmitButton } from "@/app/components/custom/submit-button";
+import { SubmitButton } from "../custom/submit-button";
 
 const INITIAL_STATE = {
-  zodErrors: null,
-  strapiErrors: null,
   data: null,
-  message: null,
 };
 
-export function SigninForm() {
-  const [formState, formAction] = useActionState(loginUserAction, INITIAL_STATE);
+export function RegisterForm() {
+  const [formState, formAction] = useActionState(registerUserAction, INITIAL_STATE);
   return (
     <div className="w-full max-w-md">
       <form action={formAction}>
         <Card>
           <CardHeader className="space-y-1">
-            <CardTitle className="text-3xl font-bold">Entrar</CardTitle>
+            <CardTitle className="text-3xl font-bold">Cadastro</CardTitle>
             <CardDescription>
-              Entre com seus dados para se logar
+              Entre com seus dados para criar uma conta
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -46,8 +45,19 @@ export function SigninForm() {
                 type="text"
                 placeholder="username"
               />
-              <ZodErrors error={formState?.zodErrors?.identifier} />
+              <ZodErrors error={formState?.zodErrors?.username} />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="name@example.com"
+              />
+              <ZodErrors error={formState?.zodErrors?.email} />
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
@@ -62,15 +72,15 @@ export function SigninForm() {
           <CardFooter className="flex flex-col">
             <SubmitButton
               className="w-full"
-              text="Entrar"
+              text="Cadastrar"
               loadingText="Loading"
             />
           </CardFooter>
         </Card>
         <div className="mt-4 text-center text-sm">
-          Não possui uma conta?
-          <Link className="underline ml-2" href="signup">
-            Cadastrar
+          Você tem uma conta?
+          <Link className="underline ml-2" href="login">
+            Entrar
           </Link>
         </div>
       </form>

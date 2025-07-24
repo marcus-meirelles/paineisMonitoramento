@@ -1,16 +1,21 @@
 'use client'
-import { logoutAction } from "@/app/data/actions/auth-actions";
+
+import { logoutAction,  atualizaBaseCompromissos} from "@/app/data/actions/auth-actions";
 import { NavLink } from '@mantine/core';
-import { IconHome2, IconTicket, IconLogout2} from '@tabler/icons-react';
-import { redirect } from "next/navigation";
+import { IconRefresh, IconLogout2} from '@tabler/icons-react';
+
 
 export default function Header(){
 
     async function logout(event: any) {
         event.preventDefault()
         await logoutAction()
-        
     }
+
+    async function atualizaBase(event: any) {
+        await atualizaBaseCompromissos()
+    }
+
   return (
     <header className="w-screen bg-blue-600 text-white h-10">
             <nav>
@@ -19,12 +24,13 @@ export default function Header(){
                         href={''}
                         label="Atendimentos"
                         leftSection={<IconTicket size={16} stroke={1.5} />} 
-                    /></i>
+                    /></i>*/
                     <i><NavLink
                         href={''}
-                        label="Perfil"
-                        leftSection={<IconHome2 size={16} stroke={1.5} />} 
-                    /></i> */}
+                        label="Atualizar"
+                        onClick={event => atualizaBase(event)}
+                        leftSection={<IconRefresh size={16} stroke={1.5} />} 
+                    /></i> }
                     <i><NavLink
                         href={''}
                         label="Sair"

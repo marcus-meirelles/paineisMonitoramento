@@ -603,9 +603,7 @@ function geraDadosDistriComprGrupoStatus(selectedCiclo: string, dominioGrupo: st
 
 
   let retorno: DistriComproGrupoStatus[] = []
-
-  console.log(dominioGrupo)
-
+  
   dominioGrupo.forEach((item, index) => {
     if (item == 'INFRAESTRUTURA') {
       dominioGrupo[index] = 'INFRA.'

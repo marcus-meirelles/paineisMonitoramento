@@ -1,43 +1,38 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { getUserMeLoader } from "@/app/data/services/get-user-me-loader";
+import { NextRequest, NextResponse } from 'next/server'
+import { getSession } from '@/lib/session'
 
 
-const notProtectedRoutes = [
-  "/signin",
-  "/signup"
+const protectedRoutes = ['/home']
+const publicRoutes = ['/login', '/signup', '/']
 
-];
 
-// Helper function to check if a path is protected
-function isNotProtectedRoute(path: string): boolean {
-  return !notProtectedRoutes.some((route) => path.startsWith(route));
-}
+export default async function middleware(req: NextRequest) {
+  // 2. Check if the current route is protected or public
+  const path = req.nextUrl.pathname
+  const isProtectedRoute = protectedRoutes.includes(path)
+  const isPublicRoute = publicRoutes.includes(path)
 
-export async function middleware(request: NextRequest) {
-  const user = await getUserMeLoader();
-  const currentPath = request.nextUrl.pathname;
-  
-  if(currentPath.startsWith("/signin") && user.ok === true)
-    return NextResponse.redirect(new URL("/home", request.url));
+  // 3. Decrypt the session from the cookie
+  const session = await getSession()
 
-  if (isNotProtectedRoute(currentPath) && user.ok === false) {
-    return NextResponse.redirect(new URL("/signin", request.url));
+  // 4. Redirect to /login if the user is not authenticated
+  if (isProtectedRoute && !session?.userId) {
+    return NextResponse.redirect(new URL('/login', req.nextUrl))
   }
 
-  return NextResponse.next();
+  // 5. Redirect to /dashboard if the user is authenticated
+  if (
+    isPublicRoute &&
+    session?.userId &&
+    !req.nextUrl.pathname.startsWith('/home')
+  ) {
+    return NextResponse.redirect(new URL('/home', req.nextUrl))
+  }
+
+  return NextResponse.next()
 }
 
-// Optionally, you can add a matcher to optimize performance
+// Routes Middleware should not run on
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
-  ],
-};
+  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
+}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { registerUserAction } from "@/app/data/actions/auth-actions";
+import { registerUserAction } from "@/data/actions/auth-actions";
 import { useActionState } from "react";
 
 import {
@@ -17,7 +17,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
-import { ZodErrors } from "@/app/components/custom/zod-errors";
+import { ZodErrors } from "@/components/custom/zod-errors";
 import { SubmitButton } from "../custom/submit-button";
 
 const INITIAL_STATE = {

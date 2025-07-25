@@ -6,4 +6,6 @@ export type Usuario = {
     email: string,
     password: string,
     nivelPermissao: NivelPermissao,
+    is_superuser: boolean,
+    is_active: boolean
 }

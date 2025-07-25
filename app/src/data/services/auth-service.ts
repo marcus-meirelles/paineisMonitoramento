@@ -1,4 +1,5 @@
 import { getSession } from '@/lib/session'
+import { redirect } from "next/navigation";
 
 interface RegisterUserProps {
   username: string;
@@ -39,7 +40,13 @@ export async function loginUserService(userData: LoginUserProps) {
       body: JSON.stringify({ ...userData }),
     });
 
+    if(!response.ok){
+      redirect("/login");
+    }
+    
     const resp = await response.json()
+
+    console.log(resp)
 
     return {
       'userId': resp.user.id, 'username': resp.user.username, 'token': resp.token, 'nivelPermissao': resp.user.nivelPermissao,
@@ -56,10 +63,8 @@ export async function logoutUserService() {
   try {
     
     const session = await getSession()
-    const token = session.token
-    const userId = session.userId
-
-    console.log(userId)
+    const token = session?.token
+    const userId = session?.userId
 
     const response = await fetch(`http://127.0.0.1:8000/api/logout/${userId}` , {
       method: "GET",

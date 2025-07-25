@@ -35,7 +35,7 @@ class UsuarioDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class PainelList(generics.ListCreateAPIView):
 
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     queryset = Painel.objects.all()
     serializer_class = PainelSerializer
@@ -50,7 +50,7 @@ class PainelDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class BaseCompromissosView(APIView):
 
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
 
@@ -207,7 +207,7 @@ class LoginView(APIView):
 
         user = authenticate(username=request.data['username'], password=request.data['password'])
 
-        print(user)
+        print(f"usuario logado: {user}")
         if not user:
             return Response({'detail': 'Invalid Credentials or activate account'}, status=HTTP_404_NOT_FOUND)
            
@@ -238,7 +238,7 @@ class LogoutView(APIView):
 
 class NivelPermissaoView(APIView):
     
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     enum_dict = {nivel.value: nivel.name for nivel in NivelPermissao}
 

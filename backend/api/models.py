@@ -26,7 +26,7 @@ class Usuario(AbstractUser):
     first_name = None
     last_name = None
     def __str__(self):
-        return str(self.id) +" "+ self.username + " " + self.email + " " + str(self.nivelPermissao)+ " " + str(self.is_superuser)+ " " + str(self.date_joined)
+        return str(self.id) +" "+ self.username + " "+ str(self.password)+" "+ self.email + " " + str(self.nivelPermissao)+ " " + str(self.is_superuser)+ " " + str(self.date_joined)
 
 class BaseCompromissos (models.Model):
     indice = models.IntegerField(null=True,  blank=True)

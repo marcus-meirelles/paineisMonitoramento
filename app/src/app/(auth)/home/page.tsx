@@ -1,9 +1,16 @@
-import PreencheDashboard from "@/app/data/services/preenche-dashboard";
 
-export default function Home() {
-  return (
-    <div >
-      <PreencheDashboard />
-    </div>
-  );
+import { getSession } from '@/lib/session'
+import { redirect } from "next/navigation";
+
+export default async function Home() {
+
+  const session = await getSession()
+  const isSuperUser = session?.isSuperUser
+
+
+  if (isSuperUser) {
+    redirect('/admin')
+  } else {
+    redirect('/dashboard')
+  }
 }

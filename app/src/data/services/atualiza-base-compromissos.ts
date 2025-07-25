@@ -3,7 +3,8 @@ import { getSession } from '@/lib/session'
 
 export default async function atualizaDadosBaseCompromissos() {
 
-    const token = (await getSession()).token
+    const session = await getSession()
+    const token = session?.token
 
     const response = await fetch("http://127.0.0.1:8000/api/baseCompromissos/", {
         method: "PUT",

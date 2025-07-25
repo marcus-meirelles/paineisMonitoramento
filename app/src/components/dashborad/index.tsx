@@ -1,13 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import Template from "@/app/components/ui/template";
 import { BaseCompromissos } from '@/types/baseCompromisso';
 import { CompromissosOrgao } from '@/types/compromissosOrgao';
 import { EspecificacaoCompromissos } from '@/types/especificacaoCompromissos';
 import { HistoricoStatus } from '@/types/hitoricoStatus'
 import { DistriComproGrupoStatus } from '@/types/distriComproGrupoStatus'
 import { LineChart, BarChart } from '@mantine/charts';
+import Template from '../template';
 
 export default function Dashboard({ data }: any) {
 
@@ -155,173 +155,171 @@ export default function Dashboard({ data }: any) {
   }
 
   return (
-    <div>
-      <>
-        <Template>
-          <div className="flex flex-row gap-4 px-2 py-2">
-            <div className="border-1 px-8 py-8 w-1/6">
-              <p>Compromissos Totais: </p>
-              <p id='idCompromissosTotais'>{compromissosTotais}</p>
-            </div>
 
-            <div className="border-1 px-8 py-8 w-1/6">
-              <p>Concluídos: </p>
-              <p id='idCompromissosConcluidos'>{compromissosConcluidos}</p>
-            </div>
+    <Template>
+      <div className="flex flex-row gap-4 px-2 py-2">
+        <div className="border-1 px-8 py-8 w-1/6">
+          <p>Compromissos Totais: </p>
+          <p id='idCompromissosTotais'>{compromissosTotais}</p>
+        </div>
 
-            <div className="border-1 px-8 py-8 w-1/6">
-              <p>Parcialmente Concluídos: </p>
-              <p id='idCompromissosParcialmenteConcluidos'>{compromissosParcialmenteConcluidos}</p>
-            </div>
+        <div className="border-1 px-8 py-8 w-1/6">
+          <p>Concluídos: </p>
+          <p id='idCompromissosConcluidos'>{compromissosConcluidos}</p>
+        </div>
 
-            <div className="border-1 px-8 py-8 w-1/6">
-              <p> A Cumprir: </p>
-              <p id='idCompromissosACumprir'>{compromissosACumprir}</p>
-            </div>
+        <div className="border-1 px-8 py-8 w-1/6">
+          <p>Parcialmente Concluídos: </p>
+          <p id='idCompromissosParcialmenteConcluidos'>{compromissosParcialmenteConcluidos}</p>
+        </div>
 
-            <div className="border-1 px-8 py-8 w-2/6">
-              <div>Filtros<br /></div>
-              <div className="flex flex-row">
-                <p>Orgão</p>
-                <div>
-                  <select name="selectOrgao" id="selectOrgao" className="border border-sky-600 rounded-sm" value={selectedOrgao} onChange={e => setSelectOrgao(e.target.value)}>
-                    <option value="0" > Todos </option>
-                    {dominioOrgaos.map((s: string) => (<option key={`${s}`} value={s}> {s}</option>))}
-                  </select>
-                </div>
-                <></>
-                <p>Ciclo</p>
-                <div className="border border-sky-600 rounded-sm ">
-                  <select value={selectedCiclo} onChange={e => setSelectCiclo(e.target.value)}>
-                    <option value="0">Todos</option>
-                    <option value="1">Cem dias</option>
-                    <option value="2">Duzentos dias</option>
-                    <option value="3">Trezentos Dias</option>
-                    <option value="4">Seisentos Dias</option>
-                    <option value="5">Setecentos e Trinta Dias</option>
-                    <option value="6">Previsao Final</option>
-                  </select>
-                </div>
+        <div className="border-1 px-8 py-8 w-1/6">
+          <p> A Cumprir: </p>
+          <p id='idCompromissosACumprir'>{compromissosACumprir}</p>
+        </div>
+
+        <div className="border-1 px-8 py-8 w-2/6">
+          <div>Filtros<br /></div>
+          <div className="flex flex-row">
+            <p>Orgão</p>
+            <div>
+              <select name="selectOrgao" id="selectOrgao" className="border border-sky-600 rounded-sm" value={selectedOrgao} onChange={e => setSelectOrgao(e.target.value)}>
+                <option value="0" > Todos </option>
+                {dominioOrgaos.map((s: string) => (<option key={`${s}`} value={s}> {s}</option>))}
+              </select>
+            </div>
+            <></>
+            <p>Ciclo</p>
+            <div className="border border-sky-600 rounded-sm ">
+              <select value={selectedCiclo} onChange={e => setSelectCiclo(e.target.value)}>
+                <option value="0">Todos</option>
+                <option value="1">Cem dias</option>
+                <option value="2">Duzentos dias</option>
+                <option value="3">Trezentos Dias</option>
+                <option value="4">Seisentos Dias</option>
+                <option value="5">Setecentos e Trinta Dias</option>
+                <option value="6">Previsao Final</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col gap-4 px-2 py-2 ">
+        <div className="">
+          <div className="flex flex-row gap-4 h-80">
+            <div className="border-1 basis-1/3">
+              <p>Histórico do Status</p>
+              <div className='border-1 h-74'>
+                <LineChart
+                  h={260}
+                  w={580}
+                  withLegend
+                  data={dadosHistoricoStatus}
+                  xAxisProps={{ padding: { left: 30, right: 30 } }}
+                  dataKey="ciclo"
+                  series={[
+                    { name: 'A_cumprir', color: 'indigo.6' },
+                    { name: 'Parc_concluídos', color: 'blue.6' },
+                    { name: 'Concluídos', color: 'teal.6' },
+                  ]}
+                  curveType="linear"
+                />
+              </div>
+            </div>
+            <div className="border-1 basis-2/3">
+              <p>Distribuição dos Compromissos por Grupo e Status</p>
+              <div className='border-1 h-74'>
+                <BarChart
+                  h={260}
+                  withLegend
+                  data={dadosDistriComprGrupoStatus}
+                  dataKey="grupo"
+                  type="stacked"
+                  maxBarWidth={50}
+                  xAxisProps={{ padding: { left: 30, right: 30 } }}
+                  series={[
+                    { name: 'Parc_concluídos', color: 'violet.6' },
+                    { name: 'Concluídos', color: 'blue.6' },
+                  ]}
+                />
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-4 px-2 py-2 ">
-            <div className="">
-              <div className="flex flex-row gap-4 h-80">
-                <div className="border-1 basis-1/3">
-                  <p>Histórico do Status</p>
-                  <div className='border-1 h-74'>
-                    <LineChart
-                      h={260}
-                      w={580}
-                      withLegend
-                      data={dadosHistoricoStatus}
-                      xAxisProps={{ padding: { left: 30, right: 30 } }}
-                      dataKey="ciclo"
-                      series={[
-                        { name: 'A_cumprir', color: 'indigo.6' },
-                        { name: 'Parc_concluídos', color: 'blue.6' },
-                        { name: 'Concluídos', color: 'teal.6' },
-                      ]}
-                      curveType="linear"
-                    />
-                  </div>
-                </div>
-                <div className="border-1 basis-2/3">
-                  <p>Distribuição dos Compromissos por Grupo e Status</p>
-                  <div className='border-1 h-74'>
-                    <BarChart
-                      h={260}
-                      withLegend
-                      data={dadosDistriComprGrupoStatus}
-                      dataKey="grupo"
-                      type="stacked"
-                      maxBarWidth={50}
-                      xAxisProps={{ padding: { left: 30, right: 30}}}
-                      series={[
-                        { name: 'Parc_concluídos', color: 'violet.6' },
-                        { name: 'Concluídos', color: 'blue.6' },
-                      ]}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="">
-              <div className="flex flex-row gap-4 h-80">
-                <div className="border-1 basis-1/3">
-                  <p>Compromissos por Órgão</p>
-                  <div className='border-1 h-74 max-h-100 overflow-y-auto
+        </div>
+        <div className="">
+          <div className="flex flex-row gap-4 h-80">
+            <div className="border-1 basis-1/3">
+              <p>Compromissos por Órgão</p>
+              <div className='border-1 h-74 max-h-100 overflow-y-auto
                         [&::-webkit-scrollbar]:w-2
                         [&::-webkit-scrollbar-track]:bg-gray-100
                         [&::-webkit-scrollbar-thumb]:bg-gray-300
                         dark:[&::-webkit-scrollbar-track]:bg-neutral-700
                         dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500' >
-                    <table className=''>
-                      <thead >
-                        <tr className='border'>
-                          <th className='border px-4 w-30'>Órgão</th>
-                          <th className='border px-4 w-30'>Concluido</th>
-                          <th className='border px-4 w-30'>Parcialmente</th>
-                          <th className='border px-4 w-30'>nan</th>
-                          <th className='border px-4 w-30'>Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
+                <table className=''>
+                  <thead >
+                    <tr className='border'>
+                      <th className='border px-4 w-30'>Órgão</th>
+                      <th className='border px-4 w-30'>Concluido</th>
+                      <th className='border px-4 w-30'>Parcialmente</th>
+                      <th className='border px-4 w-30'>nan</th>
+                      <th className='border px-4 w-30'>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
 
-                        {linhasCompromissosOrgao.map((row, index) => (
-                          <tr key={index} className='border'>
-                            <td className='border text-center '>{row.nomeOrgao}</td>
-                            <td className='border text-center '>{row.concluidos}</td>
-                            <td className='border text-center '>{row.parcialmente}</td>
-                            <td className='border text-center '>{row.nan}</td>
-                            <td className='border text-center '>{row.total}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div className="border-1 basis-2/3">
-                  <p>Especificação dos Compromissos</p>
-                  <div className='border-1 h-74 max-h-100 overflow-y-auto
+                    {linhasCompromissosOrgao.map((row, index) => (
+                      <tr key={index} className='border'>
+                        <td className='border text-center '>{row.nomeOrgao}</td>
+                        <td className='border text-center '>{row.concluidos}</td>
+                        <td className='border text-center '>{row.parcialmente}</td>
+                        <td className='border text-center '>{row.nan}</td>
+                        <td className='border text-center '>{row.total}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className="border-1 basis-2/3">
+              <p>Especificação dos Compromissos</p>
+              <div className='border-1 h-74 max-h-100 overflow-y-auto
                         [&::-webkit-scrollbar]:w-2
                         [&::-webkit-scrollbar-track]:bg-gray-100
                         [&::-webkit-scrollbar-thumb]:bg-gray-300
                         dark:[&::-webkit-scrollbar-track]:bg-neutral-700
                         dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500' >
-                    <table className=''>
-                      <thead >
-                        <tr className='border'>
-                          <th className='border px-4 w-30'>ID</th>
-                          <th className='border px-4 w-30'>Órgão</th>
-                          <th className='border px-4 w-30'>Natureza</th>
-                          <th className='border px-4 w-200'>Descrição</th>
-                          <th className='border px-4 w-30'>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
+                <table className=''>
+                  <thead >
+                    <tr className='border'>
+                      <th className='border px-4 w-30'>ID</th>
+                      <th className='border px-4 w-30'>Órgão</th>
+                      <th className='border px-4 w-30'>Natureza</th>
+                      <th className='border px-4 w-200'>Descrição</th>
+                      <th className='border px-4 w-30'>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
 
-                        {linhasEspecificacaoCompromissos.map((row, index) => (
-                          <tr key={index} className='border'>
-                            <td className='border text-center '>{row.identificador}</td>
-                            <td className='border text-center '>{row.orgao}</td>
-                            <td className='border text-center '>{row.natureza}</td>
-                            <td className='border justify-center '>{row.descricao}</td>
-                            <td className='border text-center '>{row.status}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+                    {linhasEspecificacaoCompromissos.map((row, index) => (
+                      <tr key={index} className='border'>
+                        <td className='border text-center '>{row.identificador}</td>
+                        <td className='border text-center '>{row.orgao}</td>
+                        <td className='border text-center '>{row.natureza}</td>
+                        <td className='border justify-center '>{row.descricao}</td>
+                        <td className='border text-center '>{row.status}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-        </Template>
-      </>
-    </div>
+    </Template>
+
   );
 }
 
@@ -603,7 +601,7 @@ function geraDadosDistriComprGrupoStatus(selectedCiclo: string, dominioGrupo: st
 
 
   let retorno: DistriComproGrupoStatus[] = []
-  
+
   dominioGrupo.forEach((item, index) => {
     if (item == 'INFRAESTRUTURA') {
       dominioGrupo[index] = 'INFRA.'

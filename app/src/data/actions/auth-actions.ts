@@ -1,6 +1,6 @@
 "use server";
 import { z } from "zod";
-import { registerUserService, loginUserService, logoutUserService } from "@/app/data/services/auth-service";
+import { registerUserService, loginUserService, logoutUserService } from "@/data/services/auth-service";
 import { redirect } from "next/navigation";
 import atualizaDadosBaseCompromissos from "../services/atualiza-base-compromissos";
 import { createSession, deleteSession, getSession} from '@/lib/session'
@@ -109,7 +109,7 @@ const schemaRegister = z.object({
   username: z.string().min(3).max(20, {
     message: "Username must be between 3 and 20 characters",
   }),
-  password: z.string().min(6).max(100, {
+  password: z.string().min(5).max(100, {
     message: "Password must be between 6 and 100 characters",
   }),
   email: z.string().email({
@@ -122,7 +122,7 @@ const schemaSignIn = z.object({
   username: z.string().min(3).max(20, {
     message: "Username must be between 3 and 20 characters",
   }),
-  password: z.string().min(6).max(100, {
+  password: z.string().min(5).max(100, {
     message: "Password must be between 6 and 100 characters",
   }),
 });

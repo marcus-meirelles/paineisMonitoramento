@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { loginUserAction } from "@/app/data/actions/auth-actions";
+import { loginUserAction } from "@/data/actions/auth-actions";
 
 import {
   CardTitle,
@@ -15,8 +15,8 @@ import {
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { ZodErrors } from "@/app/components/custom/zod-errors";
-import { SubmitButton } from "@/app/components/custom/submit-button";
+import { ZodErrors } from "@/components/custom/zod-errors";
+import { SubmitButton } from "@/components/custom/submit-button";
 
 const INITIAL_STATE = {
   zodErrors: null,

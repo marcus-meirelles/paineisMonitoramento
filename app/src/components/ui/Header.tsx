@@ -1,6 +1,6 @@
 'use client'
 
-import { logoutAction,  atualizaBaseCompromissos} from "@/app/data/actions/auth-actions";
+import { logoutAction,  atualizaBaseCompromissos} from "@/data/actions/auth-actions";
 import { NavLink } from '@mantine/core';
 import { IconRefresh, IconLogout2} from '@tabler/icons-react';
 

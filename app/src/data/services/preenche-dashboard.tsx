@@ -1,9 +1,10 @@
 import Dashboard from "@/components/dashborad";
 import { getSession } from '@/lib/session'
+import { SessionPayload } from "@/types/sessionPayload";
 
 export default async function PreencheDashboard() {
 
-  const session = await getSession()
+  const session :SessionPayload = await getSession()
 
   const response = await fetch("http://127.0.0.1:8000/api/baseCompromissos/", {
     method: "GET",
@@ -17,7 +18,7 @@ export default async function PreencheDashboard() {
   const result = await response.json()
 
   return (
-    <Dashboard data={result} />
+    <Dashboard data={result} session={session}/>
   )
 
 }

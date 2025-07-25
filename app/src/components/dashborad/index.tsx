@@ -8,8 +8,9 @@ import { HistoricoStatus } from '@/types/hitoricoStatus'
 import { DistriComproGrupoStatus } from '@/types/distriComproGrupoStatus'
 import { LineChart, BarChart } from '@mantine/charts';
 import Template from '../template';
+import { SessionPayload } from "@/types/sessionPayload";
 
-export default function Dashboard({ data }: any) {
+export default function Dashboard({ data, session }: {data:any, session: SessionPayload}) {
 
   const baseCompromisso: BaseCompromissos[] = data.base
 
@@ -156,7 +157,7 @@ export default function Dashboard({ data }: any) {
 
   return (
 
-    <Template>
+    <Template session={session}>
       <div className="flex flex-row gap-4 px-2 py-2">
         <div className="border-1 px-8 py-8 w-1/6">
           <p>Compromissos Totais: </p>

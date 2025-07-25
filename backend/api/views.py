@@ -207,7 +207,6 @@ class LoginView(APIView):
 
         user = authenticate(username=request.data['username'], password=request.data['password'])
 
-        print(f"usuario logado: {user}")
         if not user:
             return Response({'detail': 'Invalid Credentials or activate account'}, status=HTTP_404_NOT_FOUND)
            

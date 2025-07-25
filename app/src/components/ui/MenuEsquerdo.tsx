@@ -1,12 +1,7 @@
 import { NavLink } from '@mantine/core';
 import { IconGauge, IconFingerprint } from '@tabler/icons-react';
-import { getSession } from '@/lib/session'
 
-export default async function ConstroiMenuEsquerdo() {
-
-  const session = await getSession()
-
-  console.log(session?.nivelPermissao)
+export default function MenuEsquerdo() {
 
   return (
     <>
@@ -18,11 +13,7 @@ export default async function ConstroiMenuEsquerdo() {
       >
         <NavLink href="#required-for-focus" label="First child link" />
         <NavLink label="Second child link" href="#required-for-focus" />
-        <NavLink label="Nested parent link" childrenOffset={28} href="#required-for-focus">
-          <NavLink label="First child link" href="#required-for-focus" />
-          <NavLink label="Second child link" href="#required-for-focus" />
-          <NavLink label="Third child link" href="#required-for-focus" />
-        </NavLink>
+        
       </NavLink>
 
       <NavLink

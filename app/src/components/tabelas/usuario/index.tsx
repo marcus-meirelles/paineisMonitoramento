@@ -2,7 +2,7 @@
 import { Usuario } from "@/types/usuario";
 import { redirect } from 'next/navigation';
 
-export default function TabelaUsuario({ lista }: { lista?: Usuario[] }) {
+export default function TabelaUsuario({ lista, session }: { lista?: Usuario[], session: any }) {
 
     async function editarUsuario(event: any) {
         event.stopPropagation();

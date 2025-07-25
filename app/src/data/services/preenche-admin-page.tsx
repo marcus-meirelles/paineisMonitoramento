@@ -1,10 +1,11 @@
 import { getSession } from '@/lib/session'
 import TabelaUsuario from '@/components/tabelas/usuario';
 import Admin from '@/components/admin';
+import { SessionPayload } from '@/types/sessionPayload'
 
 export default async function PreencheAdminPage() {
 
-  const session = await getSession()
+  const session :SessionPayload = await getSession()
   const token = session?.token
 
   const response = await fetch("http://127.0.0.1:8000/api/usuarios/", {
@@ -19,7 +20,7 @@ export default async function PreencheAdminPage() {
   const result = await response.json()
 
   return (
-    <Admin lista={result} />
+    <Admin lista={result} session={session} />
   )
 
 }

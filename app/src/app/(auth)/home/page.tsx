@@ -7,7 +7,6 @@ export default async function Home() {
   const session = await getSession()
   const isSuperUser = session?.isSuperUser
 
-
   if (isSuperUser) {
     redirect('/admin')
   } else {

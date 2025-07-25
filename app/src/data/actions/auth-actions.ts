@@ -84,9 +84,6 @@ export async function loginUserAction(prevState: any, formData: FormData) {
 
   await createSession(resp.userId, resp.username, resp.token, resp.nivelPermissao, resp.isSuperUser)
 
-
-  getSession()
-
   redirect("/home");
 
 }

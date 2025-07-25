@@ -9,13 +9,20 @@ export default function FormEditarUsuario({ usuario }: { usuario: Usuario }) {
     async function atualizar(formData: FormData) {
 
         'use server'
+
+        let is_superuser = formData.get('is_superuser') == 'on' ? true : false
+
+        if(usuario.username == 'admin'){
+            is_superuser = true
+        }
+
         const user = {
             "id": formData.get('id'),
             "username": formData.get('username'),
             "password": formData.get('password'),
             "email": formData.get('email'),
             "nivelPermissao": formData.get('nivelPermissao') == '0' ? null : formData.get('nivelPermissao'),
-            "is_superuser": formData.get('is_superuser') == 'on' ? true : false,
+            "is_superuser": is_superuser,
             "is_active": formData.get('is_active') == 'on' ? true : false
         }
 
@@ -33,7 +40,7 @@ export default function FormEditarUsuario({ usuario }: { usuario: Usuario }) {
         } catch (error) {
             console.log(error)
         }
-
+        
         redirect(`/usuario/${usuario.id}`)
 
     }
@@ -61,7 +68,7 @@ export default function FormEditarUsuario({ usuario }: { usuario: Usuario }) {
 
             <div className="grid">
                 <label htmlFor="is_superuser" />É super usuario?
-                <input type="checkbox" id='is_superuser' className="border border-sky-600 rounded-sm" name="is_superuser"
+                <input type="checkbox" id='is_superuser' className="border border-sky-600 rounded-sm" name="is_superuser" 
                     disabled={usuario.username == 'admin' ? true : false}
                     defaultChecked={usuario.is_superuser} />
             </div>

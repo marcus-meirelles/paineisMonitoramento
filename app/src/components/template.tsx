@@ -1,15 +1,20 @@
+import { SessionPayload } from "@/types/sessionPayload";
 import Footer from "./ui/Footer";
 import Header from "./ui/Header";
+import MenuEsquerdo from "./ui/MenuEsquerdo";
 
-export default function Template({ children }: { children: React.ReactNode }) {
+export default function Template({ children, session }: { children: React.ReactNode, session:SessionPayload }) {
 
     return (
-        <div className="flex flex-col h-screen justify-between">
+        <div className="h-screen">
             <Header />
-            <main className="h-screen">
-                {children}
-            </main>
-            <Footer />
+            <div className="flex-row justify-between" >
+                <MenuEsquerdo />
+                <main className="h-screen">
+                    {children}
+                </main>
+                <Footer />
+            </div>
         </div>
     );
 }

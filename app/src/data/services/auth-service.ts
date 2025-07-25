@@ -46,8 +46,6 @@ export async function loginUserService(userData: LoginUserProps) {
     
     const resp = await response.json()
 
-    console.log(resp)
-
     return {
       'userId': resp.user.id, 'username': resp.user.username, 'token': resp.token, 'nivelPermissao': resp.user.nivelPermissao,
       'expires_at': resp.expires_at, 'isSuperUser' : resp.isSuperUser, 'error': null

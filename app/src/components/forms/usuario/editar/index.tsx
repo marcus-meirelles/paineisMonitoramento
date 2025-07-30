@@ -2,7 +2,7 @@
 
 import { Usuario } from "@/types/usuario";
 import { redirect } from 'next/navigation';
-import { Button, Checkbox, Group, Select, TextInput, ComboboxItem } from '@mantine/core';
+import { Button, Checkbox, Group, Select, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { SessionPayload } from "@/types/sessionPayload";
 import { useState, useEffect } from 'react';
@@ -15,8 +15,8 @@ export default function FormEditarUsuario({ usuario, session }: { usuario: Usuar
     const [usuarioAdmin, setUsuarioAdmin] = useState<boolean>();
 
     useEffect(() => {
-        setUsuarioAdmin(usuario.username == 'admin' ? true: false)
-    }, )
+        setUsuarioAdmin(usuario.username == 'admin' ? true : false)
+    },)
 
     const form = useForm({
         mode: 'uncontrolled',
@@ -67,81 +67,50 @@ export default function FormEditarUsuario({ usuario, session }: { usuario: Usuar
     }
 
     return (
-        /*         <form action={atualizar} className='grid content-center gap-2 w-150'>
-                    <div hidden>
-                        <input type="hidden" id='password' name="password" value={usuario.password} />
-                    </div>
-                    <div hidden>
-                        <input type="hidden" id='id' name="id" value={usuario.id} />
-                    </div>
-                    <div className="grid">
-                        <label htmlFor="nome" />Username
-                        <input type="text" id='username' className="border border-sky-600 rounded-sm" name="username" defaultValue={usuario.username} />
-                    </div>
-                    <div className="grid">
-                        <label htmlFor="email" />Email
-                        <input type="text" id='email' className="border border-sky-600 rounded-sm" name="email" defaultValue={usuario.email} />
-                    </div>
-                    <div className="grid">
-                        <label htmlFor="nivelPermissao" />Nivel Permissão
-                        <SelectNivelPermissao nivel={usuario.nivelPermissao} />
-                    </div>
-        
-                    <div className="grid">
-                        <label htmlFor="is_superuser" />É super usuario?
-                        <input type="checkbox" id='is_superuser' className="border border-sky-600 rounded-sm" name="is_superuser" 
-                            disabled={usuario.username == 'admin' ? true : false}
-                            defaultChecked={usuario.is_superuser} />
-                    </div>
-                    <div className="grid">
-                        <label htmlFor="is_active" />Está ativo?
-                        <input type="checkbox" id='is_active' className="border border-sky-600 rounded-sm" name="is_active" defaultChecked={usuario.is_active} />
-                    </div>
-                    <div className="grid grid-cols-2 content-between">
-                        <div><button className="bg-green-600 p-2 rounded-sm w-24 text-white" type="submit">Salvar</button></div>
-                    </div>
-                </form> */
-        <form onSubmit={form.onSubmit((values) => atualizar(values))}>
-            <TextInput
-                label="Username"
-                placeholder="Username"
-                key={form.key('username')}
-                {...form.getInputProps('username')}
-            />
-            <TextInput
-                withAsterisk
-                label="E-mail"
-                placeholder="your@email.com"
-                key={form.key('email')}
-                {...form.getInputProps('email')}
-            />
-            <Select
-                label="Nível Permissão"
-                value={value}
-                onChange={(_value, option) => { setValue(option.value) }}
-                data={[{ value: '0', label: '--' },
-                { value: '1', label: 'Baixo' },
-                { value: '2', label: 'Médio' },
-                { value: '3', label: 'Alto' }]}
-            />
+        <div className="flex flex-col space-y-4 rounded-md bg-white p-6 shadow-md border border-gray-200 mt-4 w-3/12">
+            <h1 className="text-xl font-semibold text-content-emphasis">Editar</h1>
+            <form onSubmit={form.onSubmit((values) => { return atualizar(values); })}>
+                <TextInput
+                    label="Username"
+                    placeholder="Username"
+                    key={form.key('username')}
+                    {...form.getInputProps('username')}
+                />
+                <TextInput
+                    withAsterisk
+                    label="E-mail"
+                    placeholder="your@email.com"
+                    key={form.key('email')}
+                    {...form.getInputProps('email')}
+                />
+                <Select
+                    label="Nível Permissão"
+                    value={value}
+                    onChange={(_value, option) => { setValue(option.value) }}
+                    data={[{ value: '0', label: '--' },
+                    { value: '1', label: 'Baixo' },
+                    { value: '2', label: 'Médio' },
+                    { value: '3', label: 'Alto' }]}
+                />
 
-            <Checkbox
-                mt="md"
-                label="É super usuário?"
-                disabled={usuarioAdmin}
-                key={form.key('is_superuser')}
-                {...form.getInputProps('is_superuser', { type: 'checkbox' })}
-            />
-            <Checkbox
-                mt="md"
-                label="Está ativo?"
-                key={form.key('is_active')}
-                {...form.getInputProps('is_active', { type: 'checkbox' })}
-            />
+                <Checkbox
+                    mt="md"
+                    label="É super usuário?"
+                    disabled={usuarioAdmin}
+                    key={form.key('is_superuser')}
+                    {...form.getInputProps('is_superuser', { type: 'checkbox' })}
+                />
+                <Checkbox
+                    mt="md"
+                    label="Está ativo?"
+                    key={form.key('is_active')}
+                    {...form.getInputProps('is_active', { type: 'checkbox' })}
+                />
 
-            <Group justify="flex-end" mt="md">
-                <Button type="submit">Submit</Button>
-            </Group>
-        </form>
+                <Group justify="flex-end" mt="md">
+                    <Button type="submit">Salvar</Button>
+                </Group>
+            </form>
+        </div>
     )
 }

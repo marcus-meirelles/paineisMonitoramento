@@ -3,87 +3,59 @@
 import Link from "next/link";
 
 import { registerUserAction } from "@/data/actions/auth-actions";
-import { useActionState } from "react";
-
-import {
-  CardTitle,
-  CardDescription,
-  CardHeader,
-  CardContent,
-  CardFooter,
-  Card,
-} from "@/components/ui/card";
-
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-
-import { ZodErrors } from "@/components/custom/zod-errors";
-import { SubmitButton } from "../custom/submit-button";
-
-const INITIAL_STATE = {
-  data: null,
-};
+import { Button, Group, TextInput } from '@mantine/core';
+import { useForm } from '@mantine/form';
 
 export function RegisterForm() {
-  const [formState, formAction] = useActionState(registerUserAction, INITIAL_STATE);
-  return (
-    <div className="w-full max-w-md">
-      <form action={formAction}>
-        <Card>
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-3xl font-bold">Cadastro</CardTitle>
-            <CardDescription>
-              Entre com seus dados para criar uma conta
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                name="username"
-                type="text"
-                placeholder="username"
-              />
-              <ZodErrors error={formState?.zodErrors?.username} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="name@example.com"
-              />
-              <ZodErrors error={formState?.zodErrors?.email} />
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="password"
-              />
-              <ZodErrors error={formState?.zodErrors?.password} />
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col">
-            <SubmitButton
-              className="w-full"
-              text="Cadastrar"
-              loadingText="Loading"
-            />
-          </CardFooter>
-        </Card>
-        <div className="mt-4 text-center text-sm">
-          Você tem uma conta?
-          <Link className="underline ml-2" href="login">
-            Entrar
-          </Link>
-        </div>
+  const form = useForm({
+    mode: 'uncontrolled',
+    initialValues: { username: '', password: '', email: '' },
+    validate: {
+      username: (value) => (value.length < 1 ? 'Digite um username' : null),
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'E-mail inválido'),
+      password: (value) => (value.length < 1 ? 'Digite um password' : null),
+    },
+  });
+
+  async function handlerSigon(values: {username: string; password: string; email: string;}) {
+    registerUserAction(values);
+  }
+
+  return (
+    <div className="space-y-4 rounded-md bg-white p-6 shadow-md border border-gray-200 mt-4 w-3/12">
+      <h1 className="text-xl font-semibold text-content-emphasis">Cadastro</h1>
+      <div className="flex justify-between"></div>
+      <form onSubmit={form.onSubmit((values) => handlerSigon(values))}>
+        <TextInput
+          label="Username"
+          placeholder="username"
+          key={form.key('username')}
+          {...form.getInputProps('username')}
+        />
+        <TextInput
+          label="E-mail"
+          placeholder="your@email.com"
+          key={form.key('email')}
+          {...form.getInputProps('email')}
+        />
+        <TextInput
+          type="password"
+          label="Senha"
+          placeholder="senha"
+          key={form.key('password')}
+          {...form.getInputProps('password')}
+        />
+        <Group justify="flex-end" mt="md">
+          <Button type="submit">Cadastrar</Button>
+        </Group>
       </form>
+      <div className="mt-4 text-center text-sm">
+        Você tem uma conta?
+        <Link className="underline ml-2" href="/login">
+          Entrar
+        </Link>
+      </div>
     </div>
   );
 }

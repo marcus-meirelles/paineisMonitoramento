@@ -3,7 +3,7 @@
 import { logoutAction } from "@/data/actions/auth-actions";
 import { SessionPayload } from "@/types/sessionPayload";
 import { NavLink } from '@mantine/core';
-import { IconRefresh, IconLogout2, IconHome } from '@tabler/icons-react';
+import { IconLogout2, IconHome } from '@tabler/icons-react';
 
 
 export default function Header(parm: { session: SessionPayload }) {

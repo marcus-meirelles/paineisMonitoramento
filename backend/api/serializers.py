@@ -15,7 +15,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
 class PainelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Painel
-        fields = ['nome', 'descricao', 'nivelPermissao']
+        fields = ['id', 'nome', 'descricao', 'nivelPermissao']
 
 class BaseCompromissosSerializer(serializers.ModelSerializer):
     class Meta:

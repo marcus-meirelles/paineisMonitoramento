@@ -8,7 +8,7 @@ export default async function PreencheAdminPage() {
   const session :SessionPayload = await getSession()
   const token = session?.token
 
-  const response = await fetch("http://127.0.0.1:8000/api/usuarios/", {
+/*   const response = await fetch("http://127.0.0.1:8000/api/usuarios/", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -17,10 +17,10 @@ export default async function PreencheAdminPage() {
 
   });
 
-  const result = await response.json()
+  const result = await response.json() */
 
   return (
-    <Admin lista={result} session={session} />
+    <Admin session={session} />
   )
 
 }

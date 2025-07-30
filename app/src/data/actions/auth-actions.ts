@@ -1,44 +1,27 @@
 "use server";
-import { z } from "zod";
+
 import { registerUserService, loginUserService, logoutUserService } from "@/data/services/auth-service";
 import { redirect } from "next/navigation";
 import atualizaDadosBaseCompromissos from "../services/atualiza-base-compromissos";
-import { createSession, deleteSession, getSession} from '@/lib/session'
+import { createSession, deleteSession} from '@/lib/session'
+import {LoginUserProps} from "@/types/loginUserProps"
+import {RegisterUserProps}  from "@/types/registerUserProps"
 
-export async function registerUserAction(prevState: any, formData: FormData) {
+export async function registerUserAction(userData: RegisterUserProps) {
 
-  const validatedFields = schemaRegister.safeParse({
-    username: formData.get("username"),
-    password: formData.get("password"),
-    email: formData.get("email"),
-  });
-
-  if (!validatedFields.success) {
-    return {
-      ...prevState,
-      zodErrors: validatedFields.error.flatten().fieldErrors,
-      strapiErrors: null,
-      message: "Campos faltando. Falha no registro.",
-    };
-  }
-
-  const responseData = await registerUserService(validatedFields.data);
+  const responseData = await registerUserService(userData);
 
   if (!responseData) {
     return {
-      ...prevState,
-      strapiErrors: null,
-      zodErrors: null,
-      message: "Ops! Algo deu errado.",
+      error: true,
+      message: "Ops! Algo deu errado."
     };
   }
 
   if (responseData.error) {
     return {
-      ...prevState,
-      strapiErrors: responseData.error,
-      zodErrors: null,
-      message: "Falha no registro.",
+      error: true,
+      message: "Falha no registro."
     };
   }
 
@@ -46,42 +29,17 @@ export async function registerUserAction(prevState: any, formData: FormData) {
 }
 
 
-export async function loginUserAction(prevState: any, formData: FormData) {
+export async function loginUserAction(userData: LoginUserProps) {
 
-  const validatedFields = schemaSignIn.safeParse({
-    username: formData.get("username"),
-    password: formData.get("password"),
-  });
+  const resp = await loginUserService(userData);
 
-  if (!validatedFields.success) {
-    return {
-      ...prevState,
-      zodErrors: validatedFields.error.flatten().fieldErrors,
-      strapiErrors: null,
-      message: "Campos faltando.",
+  if(resp.error){
+   return {
+      error: true,
+      message: "Falha no login."
     };
   }
-
-  const resp = await loginUserService(validatedFields.data);
-
-  if (!resp) {
-    return {
-      ...prevState,
-      strapiErrors: null,
-      zodErrors: null,
-      message: "Ops! Algo deu errado.",
-    };
-  }
-
-  if (resp.error) {
-    return {
-      ...prevState,
-      strapiErrors: null,
-      zodErrors: null,
-      message: "Falha no Login.",
-    };
-  }
-
+  
   await createSession(resp.userId, resp.username, resp.token, resp.nivelPermissao, resp.isSuperUser)
 
   redirect("/home");
@@ -101,26 +59,4 @@ export async function atualizaBaseCompromissosAction() {
 
   redirect("/compromissos");
 }
-
-const schemaRegister = z.object({
-  username: z.string().min(3).max(20, {
-    message: "Username must be between 3 and 20 characters",
-  }),
-  password: z.string().min(5).max(100, {
-    message: "Password must be between 6 and 100 characters",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address",
-  }),
-});
-
-
-const schemaSignIn = z.object({
-  username: z.string().min(3).max(20, {
-    message: "Username must be between 3 and 20 characters",
-  }),
-  password: z.string().min(5).max(100, {
-    message: "Password must be between 6 and 100 characters",
-  }),
-});
 

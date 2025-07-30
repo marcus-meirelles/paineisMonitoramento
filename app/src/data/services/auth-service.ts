@@ -1,16 +1,7 @@
 import { getSession } from '@/lib/session'
 import { redirect } from "next/navigation";
-
-interface RegisterUserProps {
-  username: string;
-  password: string;
-  email: string;
-}
-
-interface LoginUserProps {
-  username: string;
-  password: string;
-}
+import {LoginUserProps} from "@/types/loginUserProps"
+import {RegisterUserProps}  from "@/types/registerUserProps"
 
 export async function registerUserService(userData: RegisterUserProps) {
 
@@ -20,9 +11,13 @@ export async function registerUserService(userData: RegisterUserProps) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...userData }),
+      body: JSON.stringify(userData),
     });
 
+    if(!response.ok){
+      return {error: true,
+              statsus: response.status}
+    }
     return response.json();
   } catch (error) {
     console.error("Registration Service Error:", error);
@@ -37,11 +32,11 @@ export async function loginUserService(userData: LoginUserProps) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...userData }),
+      body: JSON.stringify(userData),
     });
 
     if(!response.ok){
-      redirect("/login");
+      return {error: true,}
     }
     
     const resp = await response.json()

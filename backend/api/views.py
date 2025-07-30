@@ -12,7 +12,6 @@ import pandas as pd
 import json
 from .Authentication import token_expire_handler, expires_in
 from rest_framework.status import (
-    HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
     HTTP_200_OK,
 )
@@ -232,7 +231,7 @@ class LogoutView(APIView):
         request.user.auth_token.delete()
        
         logout(request)
-        return Response({"status": "Logged out"})
+        return Response(status=HTTP_200_OK)
     
 
 class NivelPermissaoView(APIView):

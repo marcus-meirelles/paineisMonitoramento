@@ -1,4 +1,4 @@
-import Dashboard from "@/components/dashborad";
+import Compromissos from "@/components/dashborads/compromissos";
 import { getSession } from '@/lib/session'
 import { SessionPayload } from "@/types/sessionPayload";
 
@@ -18,7 +18,7 @@ export default async function PreencheDashboard() {
   const result = await response.json()
 
   return (
-    <Dashboard data={result} session={session}/>
+    <Compromissos data={result} session={session}/>
   )
 
 }

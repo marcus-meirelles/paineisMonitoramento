@@ -1,8 +1,22 @@
 'use client'
+import { NivelPermissao } from "@/types/nivelPermissao";
 import { Usuario } from "@/types/usuario";
 import { redirect } from 'next/navigation';
+import { ActionIcon, Table } from '@mantine/core';
+import { IconMoodEdit } from '@tabler/icons-react';
 
 export default function TabelaUsuario({ lista, session }: { lista?: Usuario[], session: any }) {
+
+    const rows = lista?.map((element, key) => (
+        <Table.Tr key={element.id}  data-id={element.id}>
+            <Table.Td>{element.username}</Table.Td>
+            <Table.Td>{element.email}</Table.Td>
+            <Table.Td>{NivelPermissao[element.nivelPermissao]}</Table.Td>
+            <Table.Td>{<ActionIcon size={30} onClick={event => editarUsuario(event)} title='Atualizar Usuário'>
+                <IconMoodEdit style={{ width: '70%', height: '70%' }} stroke={1.5} />
+            </ActionIcon>}</Table.Td>
+        </Table.Tr>
+    ));
 
     async function editarUsuario(event: any) {
         event.stopPropagation();
@@ -14,32 +28,17 @@ export default function TabelaUsuario({ lista, session }: { lista?: Usuario[], s
     if (lista != undefined) {
 
         return (
-
-            <table className="border-separate border-spacing-3 border border-gray-400">
-                <caption className="caption-top">
-                    Todos os Usuários
-                </caption>
-                <thead>
-                    <tr>
-                        <th className="border border-gray-300 dark:border-gray-600">Username</th>
-                        <th className="border border-gray-300 dark:border-gray-600">E-mail</th>
-                        <th className="border border-gray-300 dark:border-gray-600">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        lista?.map((usuario: Usuario) => (
-                            <tr key={usuario.id} data-id={usuario.id}>
-                                <td className="border border-gray-300 dark:border-gray-700">{usuario.username}</td>
-                                <td className="border border-gray-300 dark:border-gray-700">{usuario.email}</td>
-                                <td className="border border-gray-300 dark:border-gray-700">
-                                    <button onClick={event => editarUsuario(event)}>Editar</button>
-                                </td>
-                            </tr>
-                        ))
-                    }
-                </tbody>
-            </table>
+            <Table>
+                <Table.Thead>
+                    <Table.Tr>
+                        <Table.Th>Username</Table.Th>
+                        <Table.Th>E-mail</Table.Th>
+                        <Table.Th>Nível Permissão</Table.Th>
+                        <Table.Th>Ação</Table.Th>
+                    </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>{rows}</Table.Tbody>
+            </Table>
         )
     }
     else {

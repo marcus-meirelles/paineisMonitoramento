@@ -22,7 +22,7 @@ export default async function pageEditar({ params }: { params: Promise<{ id: str
 
     return (
         <Template session={session}>
-            <FormEditarUsuario usuario={usuario} />
+            <FormEditarUsuario usuario={usuario} session={session} />
         </Template>
     )
 }

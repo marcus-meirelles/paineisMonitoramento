@@ -1,16 +1,16 @@
-'use client'
+/* 'use client'
 
 
 import Template from "@/app/components/template";
 import { Usuario } from "@/types/usuario";
 import { useState, useEffect } from "react";
 export default function listarUsuario() {
-/*     const [usuarios, setUsuarios] = useState([])
+     const [usuarios, setUsuarios] = useState([])
     useEffect(() => {
         fetch('localhost:8000/api/usuarios')
             .then(res => res.json())
             .then(data => setUsuarios(data.usuarios))
-    }, []) */
+    }, []) 
     return (
         <Template>
 
@@ -40,8 +40,8 @@ export default function listarUsuario() {
                         ))
                         }
                         </tbody>
-                        </table> */}
+                        </table> }
             </main>
         </Template>
     )
-}
+} */

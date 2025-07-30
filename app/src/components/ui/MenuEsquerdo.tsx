@@ -1,32 +1,59 @@
+'use client'
+
+import { SessionPayload } from '@/types/sessionPayload';
 import { NavLink } from '@mantine/core';
-import { IconGauge, IconFingerprint } from '@tabler/icons-react';
+import { IconChartBar, IconCalendarCheck, IconBuildingCommunity, IconUsers } from '@tabler/icons-react';
 
-export default function MenuEsquerdo() {
+export default function MenuEsquerdo(parm: { session: SessionPayload }) {
 
-  return (
-    <>
-      <NavLink
-        href="#required-for-focus"
-        label="First parent link"
-        leftSection={<IconGauge size={16} stroke={1.5} />}
-        childrenOffset={28}
-      >
-        <NavLink href="#required-for-focus" label="First child link" />
-        <NavLink label="Second child link" href="#required-for-focus" />
+  const nivelPermissao = parm.session.nivelPermissao != null ? parm.session.nivelPermissao : 0
+
+
+  if(parm.session.isSuperUser){
+    return (
+      <>
+        <NavLink href="#required-for-focus" label="Paineis" leftSection={<IconChartBar size={16} stroke={1.5} />} childrenOffset={10}>
+          <NavLink label="Compromissos" href="/compromissos" leftSection={<IconCalendarCheck size={16} stroke={1.5} />} />
+          <NavLink label="Obras e Convenios" href="/obras-e-convenios" leftSection={<IconBuildingCommunity size={16} stroke={1.5} />} />
+        </NavLink>
+        <NavLink href="/admin" label="Usuários" leftSection={<IconUsers size={16} stroke={1.5} />} childrenOffset={10}>
+        </NavLink>
+      </>
+    );
+  }
+  else if (nivelPermissao == 3) {
+    return (
+      <>
+        <NavLink href="#required-for-focus" label="Paineis" leftSection={<IconChartBar size={16} stroke={1.5} />} childrenOffset={10}>
+          <NavLink label="Compromissos" href="/compromissos" leftSection={<IconCalendarCheck size={16} stroke={1.5} />} />
+          <NavLink label="Obras e Convenios" href="/obras-e-convenios" leftSection={<IconBuildingCommunity size={16} stroke={1.5} />} />
+        </NavLink>
+      </>
+    );
+  }
+  else if (nivelPermissao == 2) {
+    return (
+      <>
+        <NavLink href="#required-for-focus" label="Paineis" leftSection={<IconChartBar size={16} stroke={1.5} />} childrenOffset={10}>
+          <NavLink label="Obras e Convenios" href="/obras-e-convenios" leftSection={<IconBuildingCommunity size={16} stroke={1.5} />} />
+        </NavLink>
+      </>
+    );
+  }
+  else if (nivelPermissao == 1) {
+    return (
+      <>
+        <NavLink href="#required-for-focus" label="Paineis" leftSection={<IconChartBar size={16} stroke={1.5} />} childrenOffset={10}>
+          <NavLink label="Obras e Convenios" href="/obras-e-convenios" leftSection={<IconBuildingCommunity size={16} stroke={1.5} />} />
+        </NavLink>
+      </>
+    );
+  }
+  else {
+    return (
+      <>
         
-      </NavLink>
-
-      <NavLink
-        href="#required-for-focus"
-        label="Second parent link"
-        leftSection={<IconFingerprint size={16} stroke={1.5} />}
-        childrenOffset={28}
-        defaultOpened
-      >
-        <NavLink label="First child link" href="#required-for-focus" />
-        <NavLink label="Second child link" href="#required-for-focus" />
-        <NavLink label="Third child link" href="#required-for-focus" />
-      </NavLink>
-    </>
-  );
+      </>
+    );
+  }
 }

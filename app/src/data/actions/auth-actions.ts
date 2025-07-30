@@ -95,11 +95,11 @@ export async function logoutAction() {
   redirect("/login");
 }
 
-export async function atualizaBaseCompromissos() {
+export async function atualizaBaseCompromissosAction() {
 
-  atualizaDadosBaseCompromissos();
+  await atualizaDadosBaseCompromissos();
 
-  redirect("/home");
+  redirect("/compromissos");
 }
 
 const schemaRegister = z.object({

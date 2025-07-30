@@ -3,8 +3,8 @@ import { decrypt } from '@/lib/session'
 import { cookies } from 'next/headers'
  
 // 1. Specify protected and public routes
-const protectedRoutes = ['/usuario', '/dashboard', 'home']
-const publicRoutes = ['/login', '/signup', '/']
+const protectedRoutes = ['/usuario', '/compromissos', 'home', '/obras-e-convenios']
+const publicRoutes = ['/login', '/signup']
  
 export default async function middleware(req: NextRequest) {
   // 2. Check if the current route is protected or public
@@ -15,14 +15,14 @@ export default async function middleware(req: NextRequest) {
   // 3. Decrypt the session from the cookie
   const cookie = (await cookies()).get('session')?.value
   const session = await decrypt(cookie)
- 
+
   // 4. Redirect to /login if the user is not authenticated
-  if (isProtectedRoute && !session?.userId) {
+  if (isProtectedRoute && !session) {
     console.log(">>> Vai pro login")
     return NextResponse.redirect(new URL('/login', req.nextUrl))
   }
  
-  // 5. Redirect to /dashboard if the user is authenticated
+  // 5. Redirect to /home if the user is authenticated
   if (
     isPublicRoute &&
     session?.userId &&

@@ -11,7 +11,7 @@ export default function TabelaUsuario({ lista }: { lista: Usuario[]}) {
         <Table.Tr key={element.id}  data-id={element.id}>
             <Table.Td>{element.username}</Table.Td>
             <Table.Td>{element.email}</Table.Td>
-            <Table.Td>{NivelPermissao[element.nivelPermissao + 1]}</Table.Td>
+            <Table.Td>{element.nivelPermissao ? NivelPermissao[element.nivelPermissao + 1] : 'N/A'}</Table.Td>
             <Table.Td>{<ActionIcon size={30} onClick={event => editarUsuario(event)} title='Editar Usuário'>
                 <IconMoodEdit style={{ width: '70%', height: '70%' }} stroke={1.5} />
             </ActionIcon>}</Table.Td>

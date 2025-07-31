@@ -3,7 +3,7 @@ import { Usuario } from "@/types/usuario";
 import React from "react";
 import { getSession } from '@/lib/session'
 import Template from "@/components/template";
-import FormEditarUsuario from "@/components/forms/usuario/editar";
+import FormEditarUsuario from "@/components/forms/usuario";
 import { SessionPayload } from "@/types/sessionPayload";
 
 export default async function pageUsuarioEditar({ params }: { params: Promise<{ id: string }> }) {

@@ -9,7 +9,7 @@ export default async function pagePainel() {
 
     const session: SessionPayload = await getSession()
 
-    const response = await fetch("http://127.0.0.1:8000/api/paineis/", {
+    const response = await fetch("http://127.0.0.1:8000/api/painel/", {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

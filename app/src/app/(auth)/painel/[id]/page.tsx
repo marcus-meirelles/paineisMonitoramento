@@ -3,7 +3,7 @@ import { getSession } from '@/lib/session'
 import Template from "@/components/template";
 import { SessionPayload } from "@/types/sessionPayload";
 import { Painel } from "@/types/painel";
-import FormEditarPainel from "@/components/forms/painel/editar";
+import FormEditarPainel from "@/components/forms/painel";
 
 export default async function pagePainelEditar({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;

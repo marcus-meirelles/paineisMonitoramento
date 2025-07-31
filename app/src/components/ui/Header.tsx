@@ -17,7 +17,7 @@ export default function Header(parm: { session: SessionPayload }) {
         <header className="w-screen bg-blue-600 text-white h-10">
             <nav>
                 <ul className='flex justify-end justify-items-center gap-4 mr-4'>
-                    <i className="mt-2">Bem vindo, {parm.session.username} !</i>
+                    <i className="mt-2">Bem vindo(a), {parm.session.username} !</i>
 {/*                     <i><NavLink
                         href={''}
                         label="Atualizar Dashboard"

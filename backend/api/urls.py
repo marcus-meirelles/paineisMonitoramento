@@ -7,9 +7,9 @@ from api import views
 
 urlpatterns = [
 
-    path('usuarios/', views.UsuarioList.as_view()),
+    path('usuario/', views.UsuarioList.as_view()),
     path('usuario/<int:pk>/', views.UsuarioDetail.as_view()),
-    path('paineis/', views.PainelList.as_view()),
+    path('painel/', views.PainelList.as_view()),
     path('painel/<int:pk>/', views.PainelDetail.as_view()),
     path('baseCompromissos/', views.BaseCompromissosView.as_view()),
     #path('usuario-logado/', views.UsuarioLogadoView.as_view(), name='usuario_logado'),

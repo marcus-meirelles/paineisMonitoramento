@@ -9,11 +9,11 @@ export default function Template({ children, session }: { children: React.ReactN
         <div className="h-screen">
             <Header session={session} />
             
-                <Grid>
-                    <GridCol span={1}>
+                <Grid columns={20}>
+                    <GridCol span={2}>
                         <MenuEsquerdo session={session} />
                     </GridCol>
-                    <GridCol span={11}>
+                    <GridCol span={18}>
                         <main className="h-185">
                             {children}
                         </main>

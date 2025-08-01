@@ -1,5 +1,4 @@
 import { getSession } from '@/lib/session'
-import { redirect } from "next/navigation";
 import {LoginUserProps} from "@/types/loginUserProps"
 import {RegisterUserProps}  from "@/types/registerUserProps"
 

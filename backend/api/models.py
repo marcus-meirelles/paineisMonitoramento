@@ -8,6 +8,7 @@ class NivelPermissao(models.IntegerChoices):
     BAIXO = 1, 'Baixo'
 
 class Painel (models.Model):
+    id = models.AutoField(primary_key=True, editable=False)
     nome = models.CharField(max_length=100, blank=True, default='')
     descricao = models.CharField(max_length=100, blank=True, default='')
     nivelPermissao = models.IntegerField(blank=False, choices=NivelPermissao.choices)

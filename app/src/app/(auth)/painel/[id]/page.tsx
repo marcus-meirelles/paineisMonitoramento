@@ -21,7 +21,7 @@ export default async function pagePainelEditar({ params }: { params: Promise<{ i
 
     return (
         <Template session={session}>
-            <FormEditarPainel painel={painel} session={session} />
+            <FormEditarPainel painelEditar={painel} session={session} />
         </Template>
     )
 }

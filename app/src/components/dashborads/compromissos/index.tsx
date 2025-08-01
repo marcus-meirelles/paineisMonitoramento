@@ -13,7 +13,8 @@ import { IconRefresh } from '@tabler/icons-react';
 
 import { SessionPayload } from "@/types/sessionPayload";
 import Template from '@/components/template';
-import { atualizaBaseCompromissosAction } from '@/data/actions/auth-actions';
+import { atualizaBaseCompromissosAction } from '@/data/actions/dashboards-action';
+
 
 export default function Dashboard({ data, session }: { data: any, session: SessionPayload }) {
 

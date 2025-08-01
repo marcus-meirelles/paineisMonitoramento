@@ -2,10 +2,10 @@
 
 import { registerUserService, loginUserService, logoutUserService } from "@/data/services/auth-service";
 import { redirect } from "next/navigation";
-import atualizaDadosBaseCompromissos from "../services/atualiza-base-compromissos";
 import { createSession, deleteSession} from '@/lib/session'
 import {LoginUserProps} from "@/types/loginUserProps"
 import {RegisterUserProps}  from "@/types/registerUserProps"
+
 
 export async function registerUserAction(userData: RegisterUserProps) {
 
@@ -51,12 +51,5 @@ export async function logoutAction() {
   logoutUserService();
   await deleteSession()
   redirect("/login");
-}
-
-export async function atualizaBaseCompromissosAction() {
-
-  await atualizaDadosBaseCompromissos();
-
-  redirect("/compromissos");
 }
 

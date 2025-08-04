@@ -21,7 +21,7 @@ export default async function pageUsuario() {
 
     return (
         <Template session={session}>
-            <TabelaUsuario lista={result} />
+            <TabelaUsuario lista={result} session={session}  />
         </Template>
     )
 }

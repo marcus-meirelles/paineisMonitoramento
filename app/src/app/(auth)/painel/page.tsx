@@ -22,7 +22,7 @@ export default async function pagePainel() {
 
     return (
         <Template session={session}>
-            <TabelaPainel lista={result} />
+            <TabelaPainel lista={result} session={session} />
         </Template>
     )
 }

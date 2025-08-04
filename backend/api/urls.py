@@ -12,7 +12,6 @@ urlpatterns = [
     path('painel/', views.PainelList.as_view()),
     path('painel/<int:pk>/', views.PainelDetail.as_view()),
     path('baseCompromissos/', views.BaseCompromissosView.as_view()),
-    #path('usuario-logado/', views.UsuarioLogadoView.as_view(), name='usuario_logado'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
     path('login/', views.LoginView.as_view(), name='login'),
     path('logout/<int:pk>/', views.LogoutView.as_view(), name='logout'),

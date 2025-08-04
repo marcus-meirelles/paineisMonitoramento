@@ -10,13 +10,14 @@ import { LineChart, BarChart } from '@mantine/charts';
 import { ActionIcon } from '@mantine/core';
 import { IconRefresh } from '@tabler/icons-react';
 
-
-import { SessionPayload } from "@/types/sessionPayload";
-import Template from '@/components/template';
 import { atualizaBaseCompromissosAction } from '@/data/actions/dashboards-action';
 
 
-export default function Dashboard({ data, session }: { data: any, session: SessionPayload }) {
+export default function Dashboard({ data }: { data: any }) {
+
+  if (!data) {
+    return <></>
+  }
 
   const baseCompromisso: BaseCompromissos[] = data.base
 
@@ -45,30 +46,42 @@ export default function Dashboard({ data, session }: { data: any, session: Sessi
       if (selectedCiclo == '0' && selectedOrgao == '0')
         elementCompromissosConcluidos.textContent = '' + compromissosConcluidos
       else if (selectedCiclo == '0' && selectedOrgao != '0') {
-        elementCompromissosConcluidos.textContent = '' + calculaValorAgragado('', selectedOrgao);
+        elementCompromissosConcluidos.textContent = '' + calculaValorAgragado('C', selectedOrgao, selectedCiclo);
       }
       else if (selectedCiclo != '0' && selectedOrgao == '0') {
-        elementCompromissosConcluidos.textContent = '' + calculaValorAgragado('C', '');
+        elementCompromissosConcluidos.textContent = '' + calculaValorAgragado('C', '', selectedCiclo);
       }
       else {
-        elementCompromissosConcluidos.textContent = '' + calculaValorAgragado('C', selectedOrgao);
+        elementCompromissosConcluidos.textContent = '' + calculaValorAgragado('C', selectedOrgao, selectedCiclo);
       }
     }
 
     if (elementParcialmenteConcluido) {
       if (selectedCiclo == '0' && selectedOrgao == '0')
-        elementParcialmenteConcluido.textContent = '' + compromissosParcialmenteConcluidos
+        elementParcialmenteConcluido.textContent = '' + compromissosConcluidos
+      else if (selectedCiclo == '0' && selectedOrgao != '0') {
+        elementParcialmenteConcluido.textContent = '' + calculaValorAgragado('PC', selectedOrgao, selectedCiclo);
+      }
+      else if (selectedCiclo != '0' && selectedOrgao == '0') {
+        elementParcialmenteConcluido.textContent = '' + calculaValorAgragado('PC', '', selectedCiclo);
+      }
       else {
-        elementParcialmenteConcluido.textContent = '' + calculaValorAgragado('PC', selectedOrgao);
+        elementParcialmenteConcluido.textContent = '' + calculaValorAgragado('PC', selectedOrgao, selectedCiclo);
       }
     }
 
 
     if (elementCompromissosACumprir) {
       if (selectedCiclo == '0' && selectedOrgao == '0')
-        elementCompromissosACumprir.textContent = '' + compromissosACumprir
+        elementCompromissosACumprir.textContent = '' + compromissosConcluidos
+      else if (selectedCiclo == '0' && selectedOrgao != '0') {
+        elementCompromissosACumprir.textContent = '' + calculaValorAgragado('nan', selectedOrgao, selectedCiclo);
+      }
+      else if (selectedCiclo != '0' && selectedOrgao == '0') {
+        elementCompromissosACumprir.textContent = '' + calculaValorAgragado('nan', '', selectedCiclo);
+      }
       else {
-        elementCompromissosACumprir.textContent = '' + calculaValorAgragado('nan', selectedOrgao);
+        elementCompromissosACumprir.textContent = '' + calculaValorAgragado('nan', selectedOrgao, selectedCiclo);
       }
     }
   }, [selectedCiclo, selectedOrgao]);
@@ -98,12 +111,12 @@ export default function Dashboard({ data, session }: { data: any, session: Sessi
     setDadosDistriComprGrupoStatus(geraDadosDistriComprGrupoStatus(selectedCiclo, dominioGrupo, baseCompromisso))
   }, [selectedCiclo]);
 
-  function atualizaBaseCompromissos (event : any){
-      event.preventDefault()
-      atualizaBaseCompromissosAction()
+  function atualizaBaseCompromissos(event: any) {
+    event.preventDefault()
+    atualizaBaseCompromissosAction()
   }
 
-  function calculaValorAgragado(tipoFiltro: string, orgao: string): number {
+  function calculaValorAgragado(tipoFiltro: string, orgao: string, selectedCiclo: string): number {
 
     switch (selectedCiclo) {
       case '1':
@@ -161,30 +174,35 @@ export default function Dashboard({ data, session }: { data: any, session: Sessi
         return baseCompromisso.filter(item => item.previsao_final == tipoFiltro && item.orgao == orgao).length;
 
       default:
-        return baseCompromisso.filter(item => item.previsao_final == tipoFiltro).length;
+        if (tipoFiltro != '' && orgao == '') {
+          return baseCompromisso.filter(item => item.previsao_final == tipoFiltro).length;
+        }
+        else if (tipoFiltro == '' && orgao != '') {
+          return baseCompromisso.filter(item => item.orgao == orgao).length;
+        }
+        return baseCompromisso.filter(item => item.previsao_final == tipoFiltro && item.orgao == orgao).length;
     }
   }
 
   return (
-
-    <Template session={session}>
+    <>
       <div className="flex gap-4 px-2 py-2">
-        <div className="border-1 px-8 py-8 w-2/12 rounded-sm ">
-          <p>Compromissos Totais: </p>
+        <div className="border-1 px-8 py-8 w-2/12 rounded-sm" title='Apresenta o total dos compromissos presentes na base de dados'>
+          <p >Compromissos Totais: </p>
           <p id='idCompromissosTotais'>{compromissosTotais}</p>
         </div>
 
-        <div className="border-1 px-8 py-8 w-2/12 rounded-sm ">
-          <p>Concluídos: </p>
+        <div className="border-1 px-8 py-8 w-2/12 rounded-sm" title='Apresenta os compromissos concuídos por orgão e ciclo (default: previsão final)'>
+          <p >Concluídos: </p>
           <p id='idCompromissosConcluidos'>{compromissosConcluidos}</p>
         </div>
 
-        <div className="border-1 px-8 py-8 w-2/12 rounded-sm ">
+        <div className="border-1 px-8 py-8 w-2/12 rounded-sm" title='Apresenta os compromissos parcialmente concluídos por orgão e ciclo (default: previsão final)'>
           <p>Parcialmente Concluídos: </p>
           <p id='idCompromissosParcialmenteConcluidos'>{compromissosParcialmenteConcluidos}</p>
         </div>
 
-        <div className="border-1 px-8 py-8 w-2/12 rounded-sm ">
+        <div className="border-1 px-8 py-8 w-2/12 rounded-sm" title='Apresenta os compromissos a cumprir por orgão e ciclo (default: previsão final)'>
           <p> A Cumprir: </p>
           <p id='idCompromissosACumprir'>{compromissosACumprir}</p>
         </div>
@@ -222,7 +240,7 @@ export default function Dashboard({ data, session }: { data: any, session: Sessi
       <div className="flex flex-col gap-4 px-2 py-2 ">
         <div className="flex gap-4 h-80">
           <div className="border-1 rounded-sm w-140">
-            <p>Histórico do Status</p>
+            <p title='Gráfico dinâmico modificado pelo filtro orgão'>Histórico do Status</p>
             <div className='border-1 h-74'>
               <LineChart
                 h={260}
@@ -241,7 +259,7 @@ export default function Dashboard({ data, session }: { data: any, session: Sessi
             </div>
           </div>
           <div className="border-1 basis-2/3 rounded-sm">
-            <p>Distribuição dos Compromissos por Grupo e Status</p>
+            <p title='Gráfico dinâmico modificado pelo filtro ciclo'>Distribuição dos Compromissos por Grupo e Status</p>
             <div className='border-1 h-74'>
               <BarChart
                 h={260}
@@ -261,7 +279,7 @@ export default function Dashboard({ data, session }: { data: any, session: Sessi
         </div>
         <div className="flex gap-4 h-80">
           <div className="border-1 rounded-sm w-140">
-            <p>Compromissos por Órgão</p>
+            <p title='Tabela dinâmica modificada pelo filtro ciclo'>Compromissos por Órgão</p>
             <div className='border-1 h-74 max-h-100 overflow-y-auto
                         [&::-webkit-scrollbar]:w-2
                         [&::-webkit-scrollbar-track]:bg-gray-100
@@ -294,7 +312,7 @@ export default function Dashboard({ data, session }: { data: any, session: Sessi
             </div>
           </div>
           <div className="border-1 basis-2/3 rounded-sm">
-            <p>Especificação dos Compromissos</p>
+            <p title='Tabela dinâmica modificada pelos filtros orgão e ciclo'>Especificação dos Compromissos</p>
             <div className='border-1 h-74 max-h-100 overflow-y-auto
                         [&::-webkit-scrollbar]:w-2
                         [&::-webkit-scrollbar-track]:bg-gray-100
@@ -328,9 +346,7 @@ export default function Dashboard({ data, session }: { data: any, session: Sessi
           </div>
         </div>
       </div>
-
-    </Template>
-
+    </>
   );
 }
 
@@ -613,27 +629,6 @@ function geraDadosDistriComprGrupoStatus(selectedCiclo: string, dominioGrupo: st
 
   let retorno: DistriComproGrupoStatus[] = []
 
-  dominioGrupo.forEach((item, index) => {
-    if (item == 'INFRAESTRUTURA') {
-      dominioGrupo[index] = 'INFRA.'
-    }
-    else if (item == 'DESENVOLVIMENTO RURAL') {
-      dominioGrupo[index] = 'DES. RURAL'
-    }
-    else if (item == 'GESTÃO (EFICIÊNCIA E TRANSPARÊNCIA)') {
-      dominioGrupo[index] = 'GEST. (EFIC. E TRANSP.)'
-    }
-    else if (item == 'DESENVOLVIMENTO ECONÔMICO') {
-      dominioGrupo[index] = 'DES. ECONÔMICO'
-    }
-    else if (item == 'DESENVOLVIMENTO SOCIAL') {
-      dominioGrupo[index] = 'DES. SOCIAL'
-    }
-    else if (item == 'MEIO AMBIENTE') {
-      dominioGrupo[index] = 'MEIO AMBIEN.'
-    }
-  });
-
   let grupo = ''
   let Concluídos = 0
   let Parc_concluídos = 0
@@ -648,7 +643,7 @@ function geraDadosDistriComprGrupoStatus(selectedCiclo: string, dominioGrupo: st
         tupla = { grupo, Concluídos, Parc_concluídos }
         retorno.push(tupla)
       })
-      return retorno
+      break
 
     case '1':
       dominioGrupo.forEach(item => {
@@ -656,9 +651,11 @@ function geraDadosDistriComprGrupoStatus(selectedCiclo: string, dominioGrupo: st
         Concluídos = baseCompromisso.filter(item => item.cem_dias == 'C' && item.grupo == grupo).length
         Parc_concluídos = baseCompromisso.filter(item => item.cem_dias == 'PC' && item.grupo == grupo).length
         tupla = { grupo, Concluídos, Parc_concluídos }
-        retorno.push(tupla)
+
       })
-      return retorno
+      break
+
+
     case '2':
       dominioGrupo.forEach(item => {
         grupo = item
@@ -667,7 +664,7 @@ function geraDadosDistriComprGrupoStatus(selectedCiclo: string, dominioGrupo: st
         tupla = { grupo, Concluídos, Parc_concluídos }
         retorno.push(tupla)
       })
-      return retorno
+      break
 
     case '3':
       dominioGrupo.forEach(item => {
@@ -677,7 +674,7 @@ function geraDadosDistriComprGrupoStatus(selectedCiclo: string, dominioGrupo: st
         tupla = { grupo, Concluídos, Parc_concluídos }
         retorno.push(tupla)
       })
-      return retorno
+      break
 
     case '4':
       dominioGrupo.forEach(item => {
@@ -687,7 +684,7 @@ function geraDadosDistriComprGrupoStatus(selectedCiclo: string, dominioGrupo: st
         tupla = { grupo, Concluídos, Parc_concluídos }
         retorno.push(tupla)
       })
-      return retorno
+      break
 
     case '5':
       dominioGrupo.forEach(item => {
@@ -697,7 +694,7 @@ function geraDadosDistriComprGrupoStatus(selectedCiclo: string, dominioGrupo: st
         tupla = { grupo, Concluídos, Parc_concluídos }
         retorno.push(tupla)
       })
-      return retorno
+      break
 
     default:
       dominioGrupo.forEach(item => {
@@ -707,8 +704,33 @@ function geraDadosDistriComprGrupoStatus(selectedCiclo: string, dominioGrupo: st
         tupla = { grupo, Concluídos, Parc_concluídos }
         retorno.push(tupla)
       })
-      return retorno
+      break
   }
+
+  retorno.forEach((item, index) => {
+    if (item.grupo == 'INFRAESTRUTURA') {
+      item.grupo = 'INFRA'
+    }
+    else if (item.grupo == 'DESENVOLVIMENTO RURAL') {
+      item.grupo = 'DES RURAL'
+    }
+    else if (item.grupo == 'GESTÃO (EFICIÊNCIA E TRANSPARÊNCIA)') {
+      item.grupo = 'GEST (EFIC E TRANSP)'
+    }
+    else if (item.grupo == 'DESENVOLVIMENTO ECONÔMICO') {
+      item.grupo = 'DES ECONÔM'
+    }
+    else if (item.grupo == 'DESENVOLVIMENTO SOCIAL') {
+      item.grupo = 'DES SOCIAL'
+    }
+    else if (item.grupo == 'MEIO AMBIENTE') {
+      item.grupo = 'MEIO AMBIEN'
+    }
+  });
+
+  console.log(retorno)
+
+  return retorno
 
 }
 

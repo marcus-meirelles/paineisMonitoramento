@@ -8,24 +8,25 @@ import { useState, useEffect } from 'react';
 import { Painel } from "@/types/painel";
 
 
-export default function FormPainel({ painel, session }: { painel?: Painel, session: SessionPayload }) {
+export default function FormPainel({ painelEditar, session }: { painelEditar?: Painel, session: SessionPayload }) {
 
-    const [value, setValue] = useState(painel?.nivelPermissao ? painel.nivelPermissao + '' : '0');
-
-    const [usuarioAdmin, setUsuarioAdmin] = useState<boolean>();
+    const [valueNivelPermissao, setValueNivelPermissao] = useState(painelEditar?.nivelPermissao ? painelEditar.nivelPermissao + '' : '0');
 
     const form = useForm({
         mode: 'uncontrolled',
         initialValues: {
-            id: painel?.id ? painel?.id : 0,
-            nome: painel?.nome ? painel?.nome : '',
-            descricao: painel?.descricao ? painel?.descricao : '',
-            nivelPermissao: painel?.nivelPermissao ? painel?.nivelPermissao : 0,
+            id: painelEditar?.id ? painelEditar?.id : 0,
+            nome: painelEditar?.nome ? painelEditar?.nome : '',
+            descricao: painelEditar?.descricao ? painelEditar?.descricao : '',
+            nivelPermissao: painelEditar?.nivelPermissao ? painelEditar?.nivelPermissao : 0,
 
+        },
+        validate: {
+            nivelPermissao: (value) => (value != 0 ? 'Escolha um nivel de permissão' : null),
         },
     });
 
-    async function atualizar(values: {
+    async function acao(values: {
         id: number,
         nome: string,
         descricao: string,
@@ -36,29 +37,39 @@ export default function FormPainel({ painel, session }: { painel?: Painel, sessi
         try {
             let response
 
-            if(painel != undefined){
+            if (painelEditar) {
 
-                response = await fetch(`http://127.0.0.1:8000/api/painel/${painel?.id}/`, {
+                response = await fetch(`http://127.0.0.1:8000/api/painel/${values?.id}/`, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Token ${token}`,
                     },
                     method: "PUT",
-                    body: JSON.stringify(values)
+                    body: JSON.stringify({
+                        "id": values.id,
+                        "nome": values.nome,
+                        "descricao": values.descricao,
+                        "nivelPermissao": valueNivelPermissao == '0' ? null : valueNivelPermissao,
+                    })
                 },)
 
-                 const result: Painel = await response.json()
+                const result: Painel = await response.json()
 
-                 redirect(`/painel/${result.id}`)
+                redirect(`/painel/${result.id}`)
             }
-            else{
+            else {
+
                 response = await fetch(`http://127.0.0.1:8000/api/painel/`, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Token ${token}`,
                     },
                     method: "POST",
-                    body: JSON.stringify(values)
+                    body: JSON.stringify({
+                        "nome": values.nome,
+                        "descricao": values.descricao,
+                        "nivelPermissao": valueNivelPermissao == '0' ? null : valueNivelPermissao,
+                    })
                 },)
 
             }
@@ -66,16 +77,13 @@ export default function FormPainel({ painel, session }: { painel?: Painel, sessi
         } catch (error) {
             console.log(error)
         }
-
-        
         redirect(`/painel`)
-
     }
 
     return (
         <div className="flex flex-col space-y-4 rounded-md bg-white p-6 shadow-md border border-gray-200 mt-4 w-3/12">
-            <h1 className="text-xl font-semibold text-content-emphasis">Painel {painel != undefined ? 'Editar' : 'Cadastrar'}</h1>
-            <form onSubmit={form.onSubmit((values) => { return atualizar(values); })}>
+            <h1 className="text-xl font-semibold text-content-emphasis">Painel {painelEditar != undefined ? 'Editar' : 'Cadastrar'}</h1>
+            <form onSubmit={form.onSubmit((values) => { return acao(values); })}>
 
                 <input
                     type="hidden"
@@ -88,15 +96,16 @@ export default function FormPainel({ painel, session }: { painel?: Painel, sessi
                     {...form.getInputProps('nome')}
                 />
                 <TextInput
-                    withAsterisk
                     label="Descrição"
                     key={form.key('descricao')}
                     {...form.getInputProps('descricao')}
                 />
                 <Select
+                    required
                     label="Nível Permissão"
-                    value={value}
-                    onChange={(_value, option) => { setValue(option.value) }}
+                    key="nivelPermissao"
+                    value={valueNivelPermissao}
+                    onChange={(_value, option) => { setValueNivelPermissao(option.value) }}
                     data={[{ value: '0', label: '--' },
                     { value: '1', label: 'Baixo' },
                     { value: '2', label: 'Médio' },

@@ -34,7 +34,7 @@ class UsuarioDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class PainelList(generics.ListCreateAPIView):
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     queryset = Painel.objects.all()
     serializer_class = PainelSerializer
@@ -188,6 +188,8 @@ class BaseCompromissosView(APIView):
         df.set_index('indice', inplace=True)
 
         df['cem_dias'] = df['cem_dias'].replace({'NÃO AVALIADO': 'nan', 'N': 'nan'})
+
+        df['duzentos_dias'] = df['duzentos_dias'].replace({'N': 'nan'})
 
         BaseCompromissos.objects.all().delete()
         

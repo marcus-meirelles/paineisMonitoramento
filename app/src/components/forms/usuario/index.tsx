@@ -8,26 +8,29 @@ import { SessionPayload } from "@/types/sessionPayload";
 import { useState, useEffect } from 'react';
 
 
-export default function FormUsuario({ usuario, session }: { usuario?: Usuario, session: SessionPayload }) {
+export default function FormUsuario({ usuarioEditar, session }: { usuarioEditar?: Usuario, session: SessionPayload }) {
 
-    const [value, setValue] = useState(usuario?.nivelPermissao ? usuario.nivelPermissao + '' : '0');
+    const [valueNivelPermissao, setValueNivelPermissao] = useState(usuarioEditar?.nivelPermissao ? usuarioEditar.nivelPermissao + '' : '0');
 
     const [usuarioAdmin, setUsuarioAdmin] = useState<boolean>();
 
     useEffect(() => {
-        setUsuarioAdmin(usuario?.username == 'admin' ? true : false)
+        setUsuarioAdmin(usuarioEditar?.username == 'admin' ? true : false)
     },)
 
     const form = useForm({
         mode: 'uncontrolled',
         initialValues: {
-            id: usuario?.id ? usuario.id : 0,
-            password: usuario?.password ? usuario.password : '',
-            username: usuario?.username ? usuario.username : '',
-            email: usuario?.email ? usuario.email : '',
-            nivelPermissao: usuario?.nivelPermissao ? usuario.nivelPermissao : 0,
-            is_superuser: usuario?.is_superuser ? usuario.is_superuser : false,
-            is_active: usuario?.is_active ? usuario.is_active : false
+            id: usuarioEditar?.id ? usuarioEditar.id : 0,
+            password: usuarioEditar?.password ? usuarioEditar.password : '',
+            username: usuarioEditar?.username ? usuarioEditar.username : '',
+            email: usuarioEditar?.email ? usuarioEditar.email : '',
+            nivelPermissao: usuarioEditar?.nivelPermissao ? usuarioEditar.nivelPermissao : 0,
+            is_superuser: usuarioEditar?.is_superuser ? usuarioEditar.is_superuser : false,
+            is_active: usuarioEditar?.is_active ? usuarioEditar.is_active : false
+        },
+        validate: {
+            email: (value) => (/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/gi.test(value) ? null : 'E-mail invalido!'),
         },
     });
 
@@ -38,31 +41,29 @@ export default function FormUsuario({ usuario, session }: { usuario?: Usuario, s
         email: string,
         nivelPermissao: number,
         is_superuser: boolean,
-        is_active: boolean }) {
-
-        const user = {
-            "id": values.id,
-            "username": values.username,
-            "password": values.password,
-            "email": values.email,
-            "nivelPermissao": values.nivelPermissao == 0 ? null : values.nivelPermissao,
-            "is_superuser": values.is_superuser,
-            "is_active": values.is_active
-        }
+        is_active: boolean
+    }) {
 
         const token = session.token
         try {
             let response
 
-            if (usuario != undefined) {
+            if (usuarioEditar != undefined) {
 
-                response = await fetch(`http://127.0.0.1:8000/api/usuario/${user.id}/`, {
+                response = await fetch(`http://127.0.0.1:8000/api/usuario/${values.id}/`, {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Token ${token}`,
                     },
                     method: "PUT",
-                    body: JSON.stringify(user)
+                    body: JSON.stringify({
+                        "username": values.username,
+                        "password": values.password,
+                        "email": values.email,
+                        "nivelPermissao": valueNivelPermissao == '0' ? null : valueNivelPermissao,
+                        "is_superuser": values.is_superuser,
+                        "is_active": values.is_active
+                    })
                 },)
 
                 const result: Usuario = await response.json()
@@ -77,10 +78,18 @@ export default function FormUsuario({ usuario, session }: { usuario?: Usuario, s
                         Authorization: `Token ${token}`,
                     },
                     method: "POST",
-                    body: JSON.stringify(user)
+                    body: JSON.stringify({
+                        "id": values.id,
+                        "username": values.username,
+                        "password": values.password,
+                        "email": values.email,
+                       "nivelPermissao": valueNivelPermissao == '0' ? null : valueNivelPermissao,
+                        "is_superuser": values.is_superuser,
+                        "is_active": values.is_active
+                    })
                 },)
 
-                const result: Usuario = await response.json()
+                await response.json()
 
             }
         } catch (error) {
@@ -93,7 +102,7 @@ export default function FormUsuario({ usuario, session }: { usuario?: Usuario, s
 
     return (
         <div className="flex flex-col space-y-4 rounded-md bg-white p-6 shadow-md border border-gray-200 mt-4 w-3/12">
-            <h1 className="text-xl font-semibold text-content-emphasis">Usuário  {usuario != undefined ? 'Editar' : 'Cadastrar'}</h1>
+            <h1 className="text-xl font-semibold text-content-emphasis">Usuário  {usuarioEditar != undefined ? 'Editar' : 'Cadastrar'}</h1>
             <form onSubmit={form.onSubmit((values) => { return atualizar(values); })}>
                 <input
                     type="hidden"
@@ -108,8 +117,8 @@ export default function FormUsuario({ usuario, session }: { usuario?: Usuario, s
                 />
                 <TextInput
                     type="password"
-                    hidden={usuario != undefined ? true : false}
-                    label={usuario != undefined ? '' : 'Senha'}
+                    hidden={usuarioEditar != undefined ? true : false}
+                    label={usuarioEditar != undefined ? '' : 'Senha'}
                     key={form.key('password')}
                     {...form.getInputProps('password')}
                 />
@@ -122,8 +131,8 @@ export default function FormUsuario({ usuario, session }: { usuario?: Usuario, s
                 />
                 <Select
                     label="Nível Permissão"
-                    value={value}
-                    onChange={(_value, option) => { setValue(option.value) }}
+                    value={valueNivelPermissao}
+                    onChange={(_value, option) => { setValueNivelPermissao(option.value) }}
                     data={[{ value: '0', label: '--' },
                     { value: '1', label: 'Baixo' },
                     { value: '2', label: 'Médio' },

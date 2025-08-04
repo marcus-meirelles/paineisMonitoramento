@@ -14,7 +14,7 @@ export default function Template({ children, session }: { children: React.ReactN
                         <MenuEsquerdo session={session} />
                     </GridCol>
                     <GridCol span={18}>
-                        <main className="h-185">
+                        <main className="h-200">
                             {children}
                         </main>
                     </GridCol>

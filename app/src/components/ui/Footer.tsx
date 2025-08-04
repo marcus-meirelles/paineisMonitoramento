@@ -8,11 +8,6 @@ export default function Footer() {
     const router = useRouter();
     return (
         <div>
-            <div >
-                <Group justify="flex-end" mt="md">
-                    <Button leftSection={<IconCaretLeftFilled size={16} stroke={1.5} />} type="button" onClick={() => router.back()}>Voltar</Button>
-                </Group>
-            </div>
             < footer className="w-screen">
                 <div className='flex-col bg-blue-600 text-white h-1/12 mt-2 flex justify-between'>
                     <div className='flex row-auto gap-1 px-4 '><span>{<IconPhone size={16} stroke={1.5} />}</span>+55 (86) 99490‑9683</div>

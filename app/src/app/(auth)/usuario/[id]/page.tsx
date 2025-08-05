@@ -1,6 +1,5 @@
 
 import { Usuario } from "@/types/usuario";
-import React from "react";
 import { getSession } from '@/lib/session'
 import Template from "@/components/template";
 import FormEditarUsuario from "@/components/forms/usuario";

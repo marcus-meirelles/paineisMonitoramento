@@ -1,4 +1,3 @@
-import React from "react";
 import { getSession } from '@/lib/session'
 import Template from "@/components/template";
 import { SessionPayload } from "@/types/sessionPayload";

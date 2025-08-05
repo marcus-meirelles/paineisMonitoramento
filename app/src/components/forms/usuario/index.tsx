@@ -34,7 +34,7 @@ export default function FormUsuario({ usuarioEditar, session }: { usuarioEditar?
         },
     });
 
-    async function atualizar(values: {
+    async function acao(values: {
         id: number,
         password: string,
         username: string,
@@ -103,7 +103,7 @@ export default function FormUsuario({ usuarioEditar, session }: { usuarioEditar?
     return (
         <div className="flex flex-col space-y-4 rounded-md bg-white p-6 shadow-md border border-gray-200 mt-4 w-3/12">
             <h1 className="text-xl font-semibold text-content-emphasis">Usuário  {usuarioEditar != undefined ? 'Editar' : 'Cadastrar'}</h1>
-            <form onSubmit={form.onSubmit((values) => { return atualizar(values); })}>
+            <form onSubmit={form.onSubmit((values) => { return acao(values); })}>
                 <input
                     type="hidden"
                     key={form.key('id')}

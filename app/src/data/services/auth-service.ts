@@ -5,7 +5,7 @@ import {RegisterUserProps}  from "@/types/registerUserProps"
 export async function registerUserService(userData: RegisterUserProps) {
 
   try {
-    const response = await fetch("http://127.0.0.1:8000/api/usuarios/", {
+    const response = await fetch("http://127.0.0.1:8000/api/usuario/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -18,11 +18,7 @@ export default function FormPainel({ painelEditar, session }: { painelEditar?: P
             id: painelEditar?.id ? painelEditar?.id : 0,
             nome: painelEditar?.nome ? painelEditar?.nome : '',
             descricao: painelEditar?.descricao ? painelEditar?.descricao : '',
-            nivelPermissao: painelEditar?.nivelPermissao ? painelEditar?.nivelPermissao : 0,
-
-        },
-        validate: {
-            nivelPermissao: (value) => (value != 0 ? 'Escolha um nivel de permissão' : null),
+           nivelPermissao: painelEditar?.nivelPermissao ? painelEditar.nivelPermissao : 0,
         },
     });
 
@@ -54,7 +50,7 @@ export default function FormPainel({ painelEditar, session }: { painelEditar?: P
                 },)
 
                 const result: Painel = await response.json()
-
+                
                 redirect(`/painel/${result.id}`)
             }
             else {
@@ -72,11 +68,14 @@ export default function FormPainel({ painelEditar, session }: { painelEditar?: P
                     })
                 },)
 
+                await response.json()
+
             }
 
         } catch (error) {
             console.log(error)
         }
+
         redirect(`/painel`)
     }
 
@@ -101,9 +100,8 @@ export default function FormPainel({ painelEditar, session }: { painelEditar?: P
                     {...form.getInputProps('descricao')}
                 />
                 <Select
-                    required
+                    required={true}
                     label="Nível Permissão"
-                    key="nivelPermissao"
                     value={valueNivelPermissao}
                     onChange={(_value, option) => { setValueNivelPermissao(option.value) }}
                     data={[{ value: '0', label: '--' },

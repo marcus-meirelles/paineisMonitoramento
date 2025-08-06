@@ -58,7 +58,7 @@ export default function Dashboard({ data }: { data: any }) {
 
     if (elementParcialmenteConcluido) {
       if (selectedCiclo == '0' && selectedOrgao == '0')
-        elementParcialmenteConcluido.textContent = '' + compromissosConcluidos
+        elementParcialmenteConcluido.textContent = '' + compromissosParcialmenteConcluidos
       else if (selectedCiclo == '0' && selectedOrgao != '0') {
         elementParcialmenteConcluido.textContent = '' + calculaValorAgragado('PC', selectedOrgao, selectedCiclo);
       }
@@ -73,7 +73,7 @@ export default function Dashboard({ data }: { data: any }) {
 
     if (elementCompromissosACumprir) {
       if (selectedCiclo == '0' && selectedOrgao == '0')
-        elementCompromissosACumprir.textContent = '' + compromissosConcluidos
+        elementCompromissosACumprir.textContent = '' + compromissosACumprir
       else if (selectedCiclo == '0' && selectedOrgao != '0') {
         elementCompromissosACumprir.textContent = '' + calculaValorAgragado('nan', selectedOrgao, selectedCiclo);
       }

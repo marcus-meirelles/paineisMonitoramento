@@ -11,6 +11,14 @@ class UsuarioSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))
         return super(UsuarioSerializer, self).create(validated_data)
+    
+    def update(self, instance, validated_data):
+        data = self.context['request'].data
+        if 'novoPassword' in data : 
+            novoPassword = data['novoPassword']
+            if(novoPassword != None and novoPassword.strip() != ""):   
+                validated_data['password'] = make_password(novoPassword)
+        return super(UsuarioSerializer, self).update(instance, validated_data)
 
 class PainelSerializer(serializers.ModelSerializer):
     class Meta:

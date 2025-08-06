@@ -7,22 +7,45 @@ import { useForm } from '@mantine/form';
 import { SessionPayload } from "@/types/sessionPayload";
 import { useState, useEffect } from 'react';
 
-
 export default function FormUsuario({ usuarioEditar, session }: { usuarioEditar?: Usuario, session: SessionPayload }) {
+
+    const [editandoProprioUsuario, setEditadoProprioUsuario] = useState<boolean>(false);
+
+    useEffect(() => {
+        setEditadoProprioUsuario((usuarioEditar != undefined && usuarioEditar.id == Number(session.userId)) ? true : false)
+    },)
 
     const [valueNivelPermissao, setValueNivelPermissao] = useState(usuarioEditar?.nivelPermissao ? usuarioEditar.nivelPermissao + '' : '0');
 
-    const [usuarioAdmin, setUsuarioAdmin] = useState<boolean>();
+    const [isUsuarioAdminLogado, setIsUsuarioAdminLogado] = useState<boolean>(false);
 
     useEffect(() => {
-        setUsuarioAdmin(usuarioEditar?.username == 'admin' ? true : false)
+        setIsUsuarioAdminLogado(session.username == 'admin' ? true : false)
     },)
 
+    const [usuarioEdicaoAdmin, setUsuarioEdicaoAdmin] = useState<boolean>(false);
+
+    useEffect(() => {
+        setUsuarioEdicaoAdmin(usuarioEditar != undefined && usuarioEditar.username == 'admin' ? true : false)
+    },)
+
+    const [disableIsSuperUser, setDisableIsSuperUser] = useState<boolean>(false);
+
+    useEffect(() => {
+
+        const desativaCheckBoxIsSuperUser: boolean = (isUsuarioAdminLogado && editandoProprioUsuario) || (usuarioEdicaoAdmin && !isUsuarioAdminLogado)
+
+        setDisableIsSuperUser(desativaCheckBoxIsSuperUser)
+    }
+        ,)
+
+    console.log(usuarioEdicaoAdmin && !isUsuarioAdminLogado)
     const form = useForm({
         mode: 'uncontrolled',
         initialValues: {
             id: usuarioEditar?.id ? usuarioEditar.id : 0,
             password: usuarioEditar?.password ? usuarioEditar.password : '',
+            novoPassword: '',
             username: usuarioEditar?.username ? usuarioEditar.username : '',
             email: usuarioEditar?.email ? usuarioEditar.email : '',
             nivelPermissao: usuarioEditar?.nivelPermissao ? usuarioEditar.nivelPermissao : 0,
@@ -37,6 +60,7 @@ export default function FormUsuario({ usuarioEditar, session }: { usuarioEditar?
     async function acao(values: {
         id: number,
         password: string,
+        novoPassword: string,
         username: string,
         email: string,
         nivelPermissao: number,
@@ -47,8 +71,8 @@ export default function FormUsuario({ usuarioEditar, session }: { usuarioEditar?
         const token = session.token
         try {
             let response
-
-            if (usuarioEditar != undefined) {
+            // editando um usuario que não é o próprio
+            if (usuarioEditar != undefined && !editandoProprioUsuario) {
 
                 response = await fetch(`http://127.0.0.1:8000/api/usuario/${values.id}/`, {
                     headers: {
@@ -70,6 +94,32 @@ export default function FormUsuario({ usuarioEditar, session }: { usuarioEditar?
 
                 redirect(`/usuario/${result.id}`)
             }
+            // editando o próprio usuário
+            else if (editandoProprioUsuario) {
+
+                response = await fetch(`http://127.0.0.1:8000/api/usuario/${values.id}/`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Token ${token}`,
+                    },
+                    method: "PUT",
+                    body: JSON.stringify({
+                        "username": values.username,
+                        "password": values.password,
+                        "novoPassword": values.novoPassword,
+                        "email": values.email,
+                        "nivelPermissao": valueNivelPermissao == '0' ? null : valueNivelPermissao,
+                        "is_superuser": values.is_superuser,
+                        "is_active": values.is_active
+                    })
+                },)
+
+                const result: Usuario = await response.json()
+
+                redirect(`/usuario/${result.id}`)
+
+            }
+            // cadastrando um novo usuário
             else {
 
                 response = await fetch(`http://127.0.0.1:8000/api/usuario/`, {
@@ -83,7 +133,7 @@ export default function FormUsuario({ usuarioEditar, session }: { usuarioEditar?
                         "username": values.username,
                         "password": values.password,
                         "email": values.email,
-                       "nivelPermissao": valueNivelPermissao == '0' ? null : valueNivelPermissao,
+                        "nivelPermissao": valueNivelPermissao == '0' ? null : valueNivelPermissao,
                         "is_superuser": values.is_superuser,
                         "is_active": values.is_active
                     })
@@ -123,6 +173,14 @@ export default function FormUsuario({ usuarioEditar, session }: { usuarioEditar?
                     {...form.getInputProps('password')}
                 />
                 <TextInput
+                    type="password"
+                    placeholder="Caso queira alterar digite aqui a sua nova senha"
+                    hidden={!editandoProprioUsuario ? true : false}
+                    label={!editandoProprioUsuario ? '' : 'Nova Senha'}
+                    key={form.key('novoPassword')}
+                    {...form.getInputProps('novoPassword')}
+                />
+                <TextInput
                     withAsterisk
                     label="E-mail"
                     placeholder="your@email.com"
@@ -142,7 +200,7 @@ export default function FormUsuario({ usuarioEditar, session }: { usuarioEditar?
                 <Checkbox
                     mt="md"
                     label="É super usuário?"
-                    disabled={usuarioAdmin}
+                    disabled={disableIsSuperUser}
                     key={form.key('is_superuser')}
                     {...form.getInputProps('is_superuser', { type: 'checkbox' })}
                 />

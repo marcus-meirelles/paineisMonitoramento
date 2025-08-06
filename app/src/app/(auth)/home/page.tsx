@@ -13,7 +13,7 @@ export default async function Home() {
       <Grid gutter={{ }}>
         <GridCol span={6}>
           <RadarChart
-            h={300}
+            h={280}
             data={data}
             dataKey="product"
             withPolarRadiusAxis

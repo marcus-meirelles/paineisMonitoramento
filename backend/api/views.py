@@ -161,44 +161,48 @@ class BaseCompromissosView(APIView):
 
     def put(self, request):
 
-        csv_export_url  = 'https://docs.google.com/spreadsheets/d/1QvIHGu8ovZAo1m8PPJe0S1NgP5ZWTjipURufOzgIGzQ/export?format=csv&gid=1227780371#gid=1227780371'
-       
-        df = pd.read_csv(csv_export_url, encoding='UTF-8')
-
-        df.drop(columns=['indice'], inplace=True ) 
-
-        df.rename(columns={"1" : "indice",
-                      "ID" : "identificador",
-                      "COMPROMISSO" : "compromisso", 
-                      "EIXO": "eixo",
-                      "ÁREA_PLANO_DE_GOVERNO" : "areaPlanoGoverno",
-                      "GRUPO" : "grupo",
-                      "ÓRGÃO" : "orgao",
-                      "PARTICIPA" : "participa",
-                      "G1" : "g1",
-                      "NATUREZA" : "natureza",
-                      "100_DIAS" : "cem_dias",
-                      "200_DIAS" : "duzentos_dias",
-                      "300_DIAS" : "trezentos_dias",
-                      "600_DIAS" : "seisentos_dias",
-                      "730_dias" : "setecentos_trinta_dias",
-                      "PREVISÃO_final2025" : "previsao_final"
-                      }, inplace=True)
+        try:
+            csv_export_url  = 'https://docs.google.com/spreadsheets/d/1QvIHGu8ovZAo1m8PPJe0S1NgP5ZWTjipURufOzgIGzQ/export?format=csv&gid=1227780371#gid=1227780371'
         
-        df.set_index('indice', inplace=True)
+            df = pd.read_csv(csv_export_url, encoding='UTF-8')
 
-        df['cem_dias'] = df['cem_dias'].replace({'NÃO AVALIADO': 'nan', 'N': 'nan'})
+            df.drop(columns=['indice'], inplace=True ) 
 
-        df['duzentos_dias'] = df['duzentos_dias'].replace({'N': 'nan'})
+            df.rename(columns={"1" : "indice",
+                        "ID" : "identificador",
+                        "COMPROMISSO" : "compromisso", 
+                        "EIXO": "eixo",
+                        "ÁREA_PLANO_DE_GOVERNO" : "areaPlanoGoverno",
+                        "GRUPO" : "grupo",
+                        "ÓRGÃO" : "orgao",
+                        "PARTICIPA" : "participa",
+                        "G1" : "g1",
+                        "NATUREZA" : "natureza",
+                        "100_DIAS" : "cem_dias",
+                        "200_DIAS" : "duzentos_dias",
+                        "300_DIAS" : "trezentos_dias",
+                        "600_DIAS" : "seisentos_dias",
+                        "730_dias" : "setecentos_trinta_dias",
+                        "PREVISÃO_final2025" : "previsao_final"
+                        }, inplace=True)
+            
+            df.drop(df.columns[1], axis=1, inplace=True)
 
-        BaseCompromissos.objects.all().delete()
+            df['cem_dias'] = df['cem_dias'].replace({'NÃO AVALIADO': 'nan', 'N': 'nan'})
+
+            df['duzentos_dias'] = df['duzentos_dias'].replace({'N': 'nan'})
+
+            BaseCompromissos.objects.all().delete()
+            
+            for row_tuple in df.itertuples():
+                bc = BaseCompromissos(indice=row_tuple[0], identificador=row_tuple[1], compromisso=row_tuple[2], eixo=row_tuple[3], areaPlanoGoverno=row_tuple[4], grupo=row_tuple[5], orgao=row_tuple[6], participa=row_tuple[7], g1=row_tuple[8], 
+                                natureza=row_tuple[9], cem_dias= row_tuple[10], duzentos_dias=row_tuple[11], trezentos_dias=row_tuple[12], seisentos_dias=row_tuple[13], setecentos_trinta_dias=row_tuple[14], previsao_final=row_tuple[15]) 
+                bc.save() 
+            
+            return Response({'Base de compromissos atualizada'}, status=status.HTTP_200_OK)
         
-        for row_tuple in df.itertuples():
-            bc = BaseCompromissos(indice=row_tuple[0], identificador=row_tuple[1], compromisso=row_tuple[2], eixo=row_tuple[3], areaPlanoGoverno=row_tuple[4], grupo=row_tuple[5], orgao=row_tuple[6], participa=row_tuple[7], g1=row_tuple[8], 
-                             natureza=row_tuple[9], cem_dias= row_tuple[10], duzentos_dias=row_tuple[11], trezentos_dias=row_tuple[12], seisentos_dias=row_tuple[13], setecentos_trinta_dias=row_tuple[14], previsao_final=row_tuple[15]) 
-            bc.save() 
-        
-        return Response({'Base de compromissos atualizada'},status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({e.__cause__}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)     
 
 class LoginView(APIView):
 

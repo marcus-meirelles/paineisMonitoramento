@@ -20,6 +20,8 @@ export default function TabelaUsuario({ lista, session }: { lista: Usuario[], se
         <Table.Tr key={key} data-id={element.id}>
             <Table.Td>{element.id}</Table.Td>
             <Table.Td>{element.username}</Table.Td>
+            <Table.Td>{element.is_superuser ? 'Sim' : 'Não'}</Table.Td>
+            <Table.Td>{element.is_active ? 'Sim' : 'Não'}</Table.Td>
             <Table.Td>{element.email}</Table.Td>
             <Table.Td>{element.nivelPermissao ? NivelPermissao[element.nivelPermissao + 1] : 'N/A'}</Table.Td>
             <Table.Td className="flex gap-1">
@@ -82,6 +84,8 @@ export default function TabelaUsuario({ lista, session }: { lista: Usuario[], se
                         <Table.Tr>
                             <Table.Th>ID</Table.Th>
                             <Table.Th>Username</Table.Th>
+                            <Table.Th>Super Usuário</Table.Th>
+                            <Table.Th>Usuário Ativo</Table.Th>
                             <Table.Th>E-mail</Table.Th>
                             <Table.Th>Nível Permissão</Table.Th>
                             <Table.Th>Ações</Table.Th>

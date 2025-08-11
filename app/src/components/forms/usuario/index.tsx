@@ -160,6 +160,7 @@ export default function FormUsuario({ usuarioEditar, session }: { usuarioEditar?
                     {...form.getInputProps('id')}
                 />
                 <TextInput
+                    disabled
                     label="Username"
                     placeholder="Username"
                     key={form.key('username')}
@@ -174,7 +175,7 @@ export default function FormUsuario({ usuarioEditar, session }: { usuarioEditar?
                 />
                 <TextInput
                     type="password"
-                    placeholder="Caso queira alterar digite aqui a sua nova senha"
+                    placeholder="Caso queira alterar, digite aqui a sua nova senha"
                     hidden={!editandoProprioUsuario ? true : false}
                     label={!editandoProprioUsuario ? '' : 'Nova Senha'}
                     key={form.key('novoPassword')}
@@ -190,6 +191,7 @@ export default function FormUsuario({ usuarioEditar, session }: { usuarioEditar?
                 <Select
                     label="Nível Permissão"
                     value={valueNivelPermissao}
+                    disabled={usuarioEdicaoAdmin}
                     onChange={(_value, option) => { setValueNivelPermissao(option.value) }}
                     data={[{ value: '0', label: '--' },
                     { value: '1', label: 'Baixo' },

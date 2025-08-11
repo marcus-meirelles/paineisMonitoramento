@@ -21,14 +21,15 @@ export default function TabelaPainel({ lista, session }: { lista: Painel[], sess
             <Table.Td>{element.nome}</Table.Td>
             <Table.Td>{element.descricao}</Table.Td>
             <Table.Td>{NivelPermissao[element.nivelPermissao + 1]}</Table.Td>
-            <Table.Td className="flex gap-1">
+            
+            <Table.Td className="flex gap-1" hidden={session.isSuperUser ? false : true}>
                 <ActionIcon size={30} onClick={event => editarPainel(event)} title='Editar Painel'>
                     <IconEdit style={{ width: '70%', height: '70%' }} stroke={1.5} />
                 </ActionIcon>
                 <ActionIcon size={30} onClick={event => abrirModal(event)} title='Deletar Painel'>
                     <IconTrash style={{ width: '70%', height: '70%' }} stroke={1.5} />
                 </ActionIcon></Table.Td>
-        </Table.Tr>
+            </Table.Tr>
     ));
 
     function abrirModal(event: any) {

@@ -8,7 +8,7 @@ import { HistoricoStatus } from '@/types/hitoricoStatus'
 import { DistriComproGrupoStatus } from '@/types/distriComproGrupoStatus'
 import { LineChart, BarChart } from '@mantine/charts';
 import { ActionIcon } from '@mantine/core';
-import { IconRefresh } from '@tabler/icons-react';
+import { IconRefresh, IconCalendarCheck, IconCircleCheck, IconCircleDashedCheck, IconCircleX } from '@tabler/icons-react';
 
 import { atualizaBaseCompromissosAction } from '@/data/actions/dashboards-action';
 
@@ -25,7 +25,7 @@ export default function Dashboard({ data }: { data: any }) {
 
   const compromissosConcluidos = baseCompromisso.filter(item => item.previsao_final === "C").length;
 
-  const compromissosParcialmenteConcluidos = baseCompromisso.filter(item => item.previsao_final === "PC").length;
+  const comproParcConcl = baseCompromisso.filter(item => item.previsao_final === "PC").length;
 
   const compromissosACumprir = baseCompromisso.filter(item => item.previsao_final == 'nan').length;
 
@@ -38,52 +38,96 @@ export default function Dashboard({ data }: { data: any }) {
   const [selectedOrgao, setSelectOrgao] = useState('0');
 
   useEffect(() => {
+    
+    const elementCompromissosTotais = document.getElementById('idCompromissosTotais');
     const elementCompromissosConcluidos = document.getElementById('idCompromissosConcluidos');
     const elementParcialmenteConcluido = document.getElementById('idCompromissosParcialmenteConcluidos');
     const elementCompromissosACumprir = document.getElementById('idCompromissosACumprir');
+    const elementPercentCompromTotal = document.getElementById('idPercentCompromTotal')
+    const elementPercentCompromConclu = document.getElementById('idPercentCompromConclu');
+    const elementPercentCompromParcConcl = document.getElementById('idPercentCompromParcConcl');
+    const elementPercentCompromACumprir = document.getElementById('idPercentCompromACumprir');
+
+
+    let total = 0, concluido = 0, parcal = 0, acumprir = 0;
 
     if (elementCompromissosConcluidos) {
-      if (selectedCiclo == '0' && selectedOrgao == '0')
-        elementCompromissosConcluidos.textContent = '' + compromissosConcluidos
+      if (selectedCiclo == '0' && selectedOrgao == '0') {
+        concluido = compromissosConcluidos;
+        elementCompromissosConcluidos.textContent = '' + compromissosConcluidos;
+      }
       else if (selectedCiclo == '0' && selectedOrgao != '0') {
-        elementCompromissosConcluidos.textContent = '' + calculaValorAgragado('C', selectedOrgao, selectedCiclo);
+       concluido = calculaValorAgragado('C', selectedOrgao, selectedCiclo);
+        elementCompromissosConcluidos.textContent = '' + concluido;
       }
       else if (selectedCiclo != '0' && selectedOrgao == '0') {
-        elementCompromissosConcluidos.textContent = '' + calculaValorAgragado('C', '', selectedCiclo);
+        concluido = calculaValorAgragado('C', '', selectedCiclo);
+        elementCompromissosConcluidos.textContent = '' + concluido;
       }
       else {
-        elementCompromissosConcluidos.textContent = '' + calculaValorAgragado('C', selectedOrgao, selectedCiclo);
+        concluido = calculaValorAgragado('C', selectedOrgao, selectedCiclo);
+        elementCompromissosConcluidos.textContent = '' + concluido;
       }
+      total += concluido;
     }
 
     if (elementParcialmenteConcluido) {
-      if (selectedCiclo == '0' && selectedOrgao == '0')
-        elementParcialmenteConcluido.textContent = '' + compromissosParcialmenteConcluidos
+      if (selectedCiclo == '0' && selectedOrgao == '0'){
+        parcal = comproParcConcl;
+        elementParcialmenteConcluido.textContent = '' + comproParcConcl;
+      }
       else if (selectedCiclo == '0' && selectedOrgao != '0') {
-        elementParcialmenteConcluido.textContent = '' + calculaValorAgragado('PC', selectedOrgao, selectedCiclo);
+        parcal = calculaValorAgragado('PC', selectedOrgao, selectedCiclo);
+        elementParcialmenteConcluido.textContent = '' + parcal;
       }
       else if (selectedCiclo != '0' && selectedOrgao == '0') {
-        elementParcialmenteConcluido.textContent = '' + calculaValorAgragado('PC', '', selectedCiclo);
+        parcal = calculaValorAgragado('PC', '', selectedCiclo);
+        elementParcialmenteConcluido.textContent = '' + parcal;
       }
       else {
-        elementParcialmenteConcluido.textContent = '' + calculaValorAgragado('PC', selectedOrgao, selectedCiclo);
+        parcal = calculaValorAgragado('PC', selectedOrgao, selectedCiclo);
+        elementParcialmenteConcluido.textContent = '' + parcal;
       }
+      total += parcal;
     }
-
 
     if (elementCompromissosACumprir) {
-      if (selectedCiclo == '0' && selectedOrgao == '0')
+      if (selectedCiclo == '0' && selectedOrgao == '0'){
+        acumprir = compromissosACumprir
         elementCompromissosACumprir.textContent = '' + compromissosACumprir
+      }
       else if (selectedCiclo == '0' && selectedOrgao != '0') {
-        elementCompromissosACumprir.textContent = '' + calculaValorAgragado('nan', selectedOrgao, selectedCiclo);
+        acumprir = calculaValorAgragado('nan', selectedOrgao, selectedCiclo)
+        elementCompromissosACumprir.textContent = '' + acumprir
       }
       else if (selectedCiclo != '0' && selectedOrgao == '0') {
-        elementCompromissosACumprir.textContent = '' + calculaValorAgragado('nan', '', selectedCiclo);
+        acumprir = calculaValorAgragado('nan', '', selectedCiclo)
+        elementCompromissosACumprir.textContent = '' + acumprir
       }
       else {
-        elementCompromissosACumprir.textContent = '' + calculaValorAgragado('nan', selectedOrgao, selectedCiclo);
+        acumprir = calculaValorAgragado('nan', selectedOrgao, selectedCiclo)
+        elementCompromissosACumprir.textContent = '' + acumprir
       }
+      total += acumprir
     }
+
+    if(elementCompromissosTotais){
+      elementCompromissosTotais.textContent = '' + total;
+    }
+    if (elementPercentCompromTotal) {
+      elementPercentCompromTotal.textContent = (Math.round((total * 100 / total) * 100) / 100).toFixed(2) + '%';
+    }
+    if (elementPercentCompromConclu) {
+      elementPercentCompromConclu.textContent = (Math.round((concluido * 100 / total) * 100) / 100).toFixed(2) + '%';
+    }
+    if (elementPercentCompromParcConcl) {
+      elementPercentCompromParcConcl.textContent = (Math.round((parcal * 100 / total) * 100) / 100).toFixed(2) + '%';
+    }
+    if (elementPercentCompromACumprir) {
+      elementPercentCompromACumprir.textContent = (Math.round((acumprir * 100 / total) * 100) / 100).toFixed(2) + '%';
+    }
+
+
   }, [selectedCiclo, selectedOrgao]);
 
   const [linhasCompromissosOrgao, setLinhasCompromissosOrgao] = useState<CompromissosOrgao[]>([]);
@@ -147,7 +191,7 @@ export default function Dashboard({ data }: { data: any }) {
         return baseCompromisso.filter(item => item.trezentos_dias == tipoFiltro && item.orgao == orgao).length;
 
       case '4':
-        if (tipoFiltro != '' && orgao == '0') {
+        if (tipoFiltro != '' && orgao == '') {
           return baseCompromisso.filter(item => item.seisentos_dias == tipoFiltro).length;
         }
         else if (tipoFiltro == '' && orgao != '') {
@@ -187,24 +231,38 @@ export default function Dashboard({ data }: { data: any }) {
   return (
     <>
       <div className="flex gap-4 px-2 py-2">
-        <div className="border-1 px-8 py-8 w-2/12 rounded-sm" title='Apresenta o total dos compromissos presentes na base de dados'>
-          <p >Compromissos Totais: </p>
+        <div className="border-1 px-2 py-2 w-2/12 rounded-sm " title='Apresenta o total dos compromissos presentes na base de dados'>
+          <p className='flex gap-1'><IconCalendarCheck /> Compromissos Totais: </p>
           <p id='idCompromissosTotais'>{compromissosTotais}</p>
+          <div className='flex justify-end mt-6'>
+            <div className="border-1 h-7 w-17 rounded-sm text-center ">
+              <p id='idPercentCompromTotal'></p>
+            </div>
+          </div>
         </div>
 
-        <div className="border-1 px-8 py-8 w-2/12 rounded-sm" title='Apresenta os compromissos concuídos por orgão e ciclo (default: previsão final)'>
-          <p >Concluídos: </p>
+        <div className="border-1 px-2 py-2 w-2/12 rounded-sm" title='Apresenta os compromissos concuídos por orgão e ciclo (default: previsão final)'>
+          <p className='flex gap-1'> <IconCircleCheck />Concluídos: </p>
           <p id='idCompromissosConcluidos'>{compromissosConcluidos}</p>
+          <div className='flex justify-end mt-6'>
+            <div id='idPercentCompromConclu' className="border-1 h-7 w-17 rounded-sm text-center">{(Math.round((compromissosConcluidos * 100 / compromissosTotais) * 100) / 100).toFixed(2)} %</div>
+          </div>
         </div>
 
-        <div className="border-1 px-8 py-8 w-2/12 rounded-sm" title='Apresenta os compromissos parcialmente concluídos por orgão e ciclo (default: previsão final)'>
-          <p>Parcialmente Concluídos: </p>
-          <p id='idCompromissosParcialmenteConcluidos'>{compromissosParcialmenteConcluidos}</p>
+        <div className="border-1 px-2 py-2 w-2/12 rounded-sm" title='Apresenta os compromissos parcialmente concluídos por orgão e ciclo (default: previsão final)'>
+          <p className='flex gap-1'> <IconCircleDashedCheck />Parcialmente Concluídos: </p>
+          <p id='idCompromissosParcialmenteConcluidos'>{comproParcConcl}</p>
+          <div className='flex justify-end mt-6'>
+            <div id='idPercentCompromParcConcl' className="border-1 h-7 w-17 rounded-sm text-center">{(Math.round((comproParcConcl * 100 / compromissosTotais) * 100) / 100).toFixed(2)} %</div>
+          </div>
         </div>
 
-        <div className="border-1 px-8 py-8 w-2/12 rounded-sm" title='Apresenta os compromissos a cumprir por orgão e ciclo (default: previsão final)'>
-          <p> A Cumprir: </p>
+        <div className="border-1 px-2 py-2 w-2/12 rounded-sm" title='Apresenta os compromissos a cumprir por orgão e ciclo (default: previsão final)'>
+          <p className='flex gap-1'> <IconCircleX />A Cumprir: </p>
           <p id='idCompromissosACumprir'>{compromissosACumprir}</p>
+          <div className='flex justify-end mt-6'>
+            <div id='idPercentCompromACumprir' className="border-1 h-7 w-17 rounded-sm text-center">{(Math.round((compromissosACumprir * 100 / compromissosTotais) * 100) / 100).toFixed(2)} %</div>
+          </div>
         </div>
 
         <div className="border-1 px-3 py-8 w-3/12 rounded-sm ">
@@ -651,7 +709,7 @@ function geraDadosDistriComprGrupoStatus(selectedCiclo: string, dominioGrupo: st
         Concluídos = baseCompromisso.filter(item => item.cem_dias == 'C' && item.grupo == grupo).length
         Parc_concluídos = baseCompromisso.filter(item => item.cem_dias == 'PC' && item.grupo == grupo).length
         tupla = { grupo, Concluídos, Parc_concluídos }
-
+        retorno.push(tupla)
       })
       break
 
@@ -727,8 +785,6 @@ function geraDadosDistriComprGrupoStatus(selectedCiclo: string, dominioGrupo: st
       item.grupo = 'MEIO AMBIEN'
     }
   });
-
-  console.log(retorno)
 
   return retorno
 
